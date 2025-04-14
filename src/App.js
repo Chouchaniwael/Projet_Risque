@@ -40,6 +40,7 @@ import brandDark from "assets/images/logo-ct-dark.png";
 
 // Importation du fichier ClientDetailPage depuis le bon chemin
 import ClientDetailPage from "./layouts/ClientDetailPage";
+import ClientAddPage from "layouts/clientaddPage";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -182,7 +183,8 @@ export default function App() {
       <Routes>
         {getRoutes(routes)}
         {/* Ajouter la route pour la page des détails du client */}
-        <Route path="/client/:name" element={<ClientDetailPage />} />
+        <Route path="/client/:id" element={<ClientDetailPage />} />
+        <Route path="/client/ajouter" element={<ClientAddPage />} />
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>

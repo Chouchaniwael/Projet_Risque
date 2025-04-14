@@ -38,7 +38,7 @@ export default function useClientData() {
       { Header: "Client", accessor: "author", width: "45%", align: "left" },
       { Header: "Secteur", accessor: "function", align: "left" },
       { Header: "status", accessor: "status", align: "center" },
-      { Header: "employed", accessor: "employed", align: "center" },
+      { Header: "Date Création", accessor: "employed", align: "center" },
       { Header: "action", accessor: "action", align: "center" },
     ],
     rows: [],

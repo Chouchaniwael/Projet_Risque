@@ -1,16 +1,16 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const app = express();
 const path = require("path");
-app.use("/images", express.static(path.join(__dirname, "assets", "images")));
+
+const app = express();
 
 // Middleware
 app.use(cors({
-    origin: "http://localhost:3000" // Assurez-vous que c'est l'adresse de ton frontend
-  }));
+  origin: "http://localhost:3000"
+}));
 app.use(express.json());
+app.use("/images", express.static(path.join(__dirname, "assets", "images")));
 
 // Connexion à MongoDB
 mongoose.connect("mongodb://localhost:27017/myApp", {
@@ -22,9 +22,9 @@ mongoose.connect("mongodb://localhost:27017/myApp", {
 
 // Routes
 const authRoutes = require("./routes/auth");
-const clientRoutes = require('./routes/findclient');
-console.log("clientRouter:", clientRoutes);
+const clientRoutes = require("./routes/clientlist");
 app.use("/api/auth", authRoutes);
 app.use('/api/clients', clientRoutes);
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`));

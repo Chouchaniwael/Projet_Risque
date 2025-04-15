@@ -9,4 +9,4 @@ const clientSchema = new mongoose.Schema({
   Statut: { type: Boolean, default: true },
 });
 
-module.exports = mongoose.model("Client", clientSchema);
+module.exports = mongoose.models.Client || mongoose.model("Client", clientSchema);

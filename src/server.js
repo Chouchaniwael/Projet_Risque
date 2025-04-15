@@ -23,6 +23,8 @@ mongoose.connect("mongodb://localhost:27017/myApp", {
 // Routes
 const authRoutes = require("./routes/auth");
 const clientRoutes = require("./routes/clientlist");
+const clientAjoutRoute = require("./routes/clientajout");
+app.use("/api/clientajout", clientAjoutRoute);
 app.use("/api/auth", authRoutes);
 app.use('/api/clients', clientRoutes);
 

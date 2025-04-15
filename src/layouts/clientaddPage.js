@@ -4,22 +4,16 @@ import { useNavigate } from "react-router-dom";
 // Material UI
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Input from "@mui/material/Input";
-import Typography from "@mui/material/Typography";
+import MDTypography from "components/MDBox";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import { Box } from "@mui/material";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-
-// Material Dashboard 2 React
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 
 // Layouts
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import MDBox from "components/MDBox";
+import { Plus } from "lucide-react";
 
 const ClientAddPage = () => {
   const [formData, setFormData] = useState({
@@ -32,31 +26,19 @@ const ClientAddPage = () => {
     logo: null,
   });
 
+  const [subClients, setSubClients] = useState([]);
   const [preview, setPreview] = useState(null);
   const [hasSubClient, setHasSubClient] = useState(false);
-  const [subClientData, setSubClientData] = useState({
-    name: "",
-    email: "",
-  });
 
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  // Handle adding a new sub-client
+  const handleAddSubClient = () => {
+    setSubClients([
+      ...subClients,
+      { name: "", email: "", address: "", description: "" },
+    ]);
   };
 
-  const handleSubClientChange = (e) => {
-    const { name, value } = e.target;
-    setSubClientData({
-      ...subClientData,
-      [name]: value,
-    });
-  };
-
+  // Handle file upload for logo
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -73,8 +55,89 @@ const ClientAddPage = () => {
     }
   };
 
+  const [errors, setErrors] = useState({
+    name: "",
+    address: "",
+    description:'',
+    secteur: "",
+    mail: "",
+    phone: "",
+    subClientErrors: [],
+  });
+
+  const navigate = useNavigate();
+
+  // Handle changes for client data
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle changes for sub-client data
+  const handleSubClientChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedSubClients = [...subClients];
+    updatedSubClients[index][name] = value;
+    setSubClients(updatedSubClients);
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation logic
+    let formErrors = {};
+    let subClientErrors = [];
+    let isValid = true;
+
+    if (!formData.name) {
+      formErrors.name = "Nom est requis.";
+      isValid = false;
+    }
+    if (!formData.description) {
+      formErrors.description = "description est requis.";
+      isValid = false;
+    }
+    if (!formData.address) {
+      formErrors.address = "Adresse est requise.";
+      isValid = false;
+    }
+    if (!formData.secteur) {
+      formErrors.secteur = "Secteur est requis.";
+      isValid = false;
+    }
+    if (!formData.mail) {
+      formErrors.mail = "Email est requis.";
+      isValid = false;
+    }
+    if (!formData.phone) {
+      formErrors.phone = "Numéro de téléphone est requis.";
+      isValid = false;
+    }
+
+    // Validate sub-client data if they exist
+    if (hasSubClient) {
+      subClients.forEach((subClient, index) => {
+        let subClientError = {};
+        if (!subClient.name) subClientError.name = "Nom du site est requis.";
+        if (!subClient.email) subClientError.email = "Email du site est requis.";
+        if (!subClient.address) subClientError.address = "Adresse du site est requise.";
+        if (Object.keys(subClientError).length > 0) {
+          subClientErrors[index] = subClientError;
+          isValid = false;
+        }
+      });
+    }
+
+    setErrors({
+      ...formErrors,
+      subClientErrors: subClientErrors,
+    });
+
+    if (!isValid) return;
 
     const form = new FormData();
     form.append("name", formData.name);
@@ -88,8 +151,12 @@ const ClientAddPage = () => {
     }
 
     if (hasSubClient) {
-      form.append("subClientName", subClientData.name);
-      form.append("subClientEmail", subClientData.email);
+      subClients.forEach((subClient, index) => {
+        form.append(`subClientName[${index}]`, subClient.name);
+        form.append(`subClientEmail[${index}]`, subClient.email);
+        form.append(`subClientAddress[${index}]`, subClient.address);
+        form.append(`subClientDescription[${index}]`, subClient.description);
+      });
     }
 
     try {
@@ -117,7 +184,6 @@ const ClientAddPage = () => {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              {/* En-tête bleu avec le titre */}
               <MDBox
                 mx={2}
                 mt={-3}
@@ -133,7 +199,6 @@ const ClientAddPage = () => {
                 </MDTypography>
               </MDBox>
 
-              {/* Formulaire dans un cadre blanc */}
               <MDBox p={4}>
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={2}>
@@ -145,6 +210,8 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.name)}
+                        helperText={errors.name}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -155,6 +222,8 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.address)}
+                        helperText={errors.address}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -165,6 +234,8 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.secteur)}
+                        helperText={errors.secteur}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -175,6 +246,8 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.description)}
+                        helperText={errors.description}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -185,6 +258,8 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.mail)}
+                        helperText={errors.mail}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -195,12 +270,15 @@ const ClientAddPage = () => {
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
+                        error={Boolean(errors.phone)}
+                        helperText={errors.phone}
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <Typography align="left" mt={2} mb={1}>
+                   
+                       <Grid item xs={12}>
+                      <MDTypography align="left" mt={2} mb={1}>
                         Logo de l’entreprise :
-                      </Typography>
+                      </MDTypography>
                       <label htmlFor="upload-logo">
                         <input
                           accept="image/*"
@@ -231,77 +309,94 @@ const ClientAddPage = () => {
                     </Grid>
 
                     {/* Switch sous-client */}
-                    <Grid item xs={12}>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={hasSubClient}
-                            onChange={() => setHasSubClient(!hasSubClient)}
-                            color="primary"
-                          />
-                        }
-                        label="Ajouter un Site"
-                      />
-                    </Grid>
+                    
+                       <Grid itemxs={12}>
+                    {/* Champs des sous-clients */}
+                    {subClients.length > 0 &&
+  subClients.map((subClient, index) => (
+    <div key={index}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Nom du site"
+            name="name"
+            value={subClient.name}
+            onChange={(e) => handleSubClientChange(index, e)}
+            fullWidth
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Contact du Site"
+            name="email"
+            value={subClient.email}
+            onChange={(e) => handleSubClientChange(index, e)}
+            fullWidth
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Adresse du site"
+            name="address"
+            value={subClient.address}
+            onChange={(e) => handleSubClientChange(index, e)}
+            fullWidth
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Description"
+            name="description"
+            value={subClient.description}
+            onChange={(e) => handleSubClientChange(index, e)}
+            fullWidth
+            margin="normal"
+          />
+        </Grid>
+      </Grid>
 
-                    {/* Champs du sous-client */}
-                    {hasSubClient && (
-                      <>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Nom du site"
-                            name="name"
-                            value={subClientData.name}
-                            onChange={handleSubClientChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Contact du Site"
-                            name="email"
-                            value={subClientData.email}
-                            onChange={handleSubClientChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Adresse du site"
-                            name="Adresse"
-                            value={subClientData.name}
-                            onChange={handleSubClientChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Description"
-                            name="Description"
-                            value={subClientData.name}
-                            onChange={handleSubClientChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                        </Grid>
-                      </>
-                    )}
+      {/* Add a line between the subClients except the last one */}
+      {index < subClients.length - 1 && (
+        <div
+          style={{
+            height: '2px', 
+            backgroundColor: '#ccc', 
+            margin: '20px 0',
+          }}
+        />
+      )}
+    </div>
+  ))}
+ </Grid>
+ <Grid container spacing={2}>
+  <Grid item xs={6}>
+    <Button
+      variant="contained"
+      color="primary"
+    
+      sx={{ mt: 1, color: "WHITE" }}
+      onClick={handleAddSubClient}
+    >
+      
+      <Plus />Ajouter un site
+    </Button>
+  </Grid>
+  <Grid item xs={6}>
+    <Button
+      type="submit"
+      variant="contained"
+      color="primary"
 
-                    <Grid item xs={12}>
-                      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          sx={{ mt: 1, color: "WHITE" }}
-                        >
-                          Ajouter le client
-                        </Button>
-                      </Box>
-                    </Grid>
+      sx={{ mt: 1, color: "WHITE" }}
+    >
+      Ajouter Client
+    </Button>
+  </Grid>
+</Grid>
+
                   </Grid>
                 </form>
               </MDBox>

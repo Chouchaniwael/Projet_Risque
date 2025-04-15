@@ -47,12 +47,15 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import ForgotPassword from "nejdWork/forgot_password";
+import ResetPassword from "nejdWork/reset_password";
 
 const routes = [
   {
     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
+    show:true,
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
@@ -61,6 +64,7 @@ const routes = [
     type: "collapse",
     name: "Clients",
     key: "tables",
+    show:true,
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
     component: <Tables />,
@@ -69,6 +73,7 @@ const routes = [
     type: "collapse",
     name: "Scénario de risque",
     key: "billing",
+    show:true,
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
     component: <Billing />,
@@ -77,6 +82,7 @@ const routes = [
     type: "collapse",
     name: "RTL",
     key: "rtl",
+    show:true,
     icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
     route: "/rtl",
     component: <RTL />,
@@ -85,6 +91,7 @@ const routes = [
     type: "collapse",
     name: "Notifications",
     key: "notifications",
+    show:true,
     icon: <Icon fontSize="small">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
@@ -93,17 +100,42 @@ const routes = [
     type: "collapse",
     name: "Profile",
     key: "profile",
+    show:true,
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
   },
   {
     type: "collapse",
-    name: "Déconnexion",
     key: "sign-in",
+    show:false,
     icon: <Icon fontSize="small">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
+  },
+  {
+    type: "collapse",
+    key: "sign-up",
+    show:false,
+    icon: <Icon fontSize="small">sign up</Icon>,
+    route: "/authentication/sign-up",
+    component: <SignUp />,
+  },
+  {
+    type: "collapse",
+    key: "forgot-password",
+    show:false,
+    icon: <Icon fontSize="small">forgot password</Icon>,
+    route: "/authentication/forgot-password",
+    component: <ForgotPassword />,
+  },
+  {
+    type: "collapse",
+    key: "reset-password",
+    show:false,
+    icon: <Icon fontSize="small">reset password</Icon>,
+    route: "/authentication/reset-password/:token",
+    component: <ResetPassword />,
   },
 ];
 

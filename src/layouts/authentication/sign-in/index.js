@@ -130,6 +130,14 @@ function Basic() {
                 Se Connecter
               </MDButton>
             </MDBox>
+            <MDBox textAlign="center" mt={2}>
+        <MDTypography variant="button" color="text">
+          Mot de passe oublié ?&nbsp;
+          <Link to="/authentication/forgot-password" style={{ color: "#f44336", fontWeight: "500" }}>
+            Réinitialiser
+          </Link>
+        </MDTypography>
+      </MDBox>
           </MDBox>
         </MDBox>
 

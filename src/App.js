@@ -105,7 +105,7 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return  <Route exact path={route.route} element={route.component} key={route.key} />;
       }
 
       return null;
@@ -145,7 +145,7 @@ export default function App() {
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
               brandName="Material Dashboard 2"
-              routes={routes}
+              routes={routes.filter(route => route.show)}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
@@ -171,7 +171,7 @@ export default function App() {
             color={sidenavColor}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="Material Dashboard 2"
-            routes={routes}
+            routes={routes.filter(route => route.show)}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -182,7 +182,6 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        {/* Ajouter la route pour la page des détails du client */}
         <Route path="/client/:id" element={<ClientDetailPage />} />
         <Route path="/client/ajouter" element={<ClientAddPage />} />
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />

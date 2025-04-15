@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import { Box } from "@mui/material";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 // Material Dashboard 2 React
 import MDBox from "components/MDBox";
@@ -31,12 +33,26 @@ const ClientAddPage = () => {
   });
 
   const [preview, setPreview] = useState(null);
+  const [hasSubClient, setHasSubClient] = useState(false);
+  const [subClientData, setSubClientData] = useState({
+    name: "",
+    email: "",
+  });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubClientChange = (e) => {
+    const { name, value } = e.target;
+    setSubClientData({
+      ...subClientData,
       [name]: value,
     });
   };
@@ -69,6 +85,11 @@ const ClientAddPage = () => {
     form.append("phone", formData.phone);
     if (formData.logo) {
       form.append("logo", formData.logo);
+    }
+
+    if (hasSubClient) {
+      form.append("subClientName", subClientData.name);
+      form.append("subClientEmail", subClientData.email);
     }
 
     try {
@@ -180,7 +201,24 @@ const ClientAddPage = () => {
                       <Typography align="left" mt={2} mb={1}>
                         Logo de l’entreprise :
                       </Typography>
-                      <Input type="file" accept="image/*" onChange={handleFileChange} />
+                      <label htmlFor="upload-logo">
+                        <input
+                          accept="image/*"
+                          id="upload-logo"
+                          type="file"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          sx={{ mt: 1, color: "WHITE" }}
+                        >
+                          Choisir un Logo
+                        </Button>
+                      </label>
+
                       {preview && (
                         <MDBox mt={2}>
                           <img
@@ -191,6 +229,67 @@ const ClientAddPage = () => {
                         </MDBox>
                       )}
                     </Grid>
+
+                    {/* Switch sous-client */}
+                    <Grid item xs={12}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={hasSubClient}
+                            onChange={() => setHasSubClient(!hasSubClient)}
+                            color="primary"
+                          />
+                        }
+                        label="Ajouter un Site"
+                      />
+                    </Grid>
+
+                    {/* Champs du sous-client */}
+                    {hasSubClient && (
+                      <>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Nom du site"
+                            name="name"
+                            value={subClientData.name}
+                            onChange={handleSubClientChange}
+                            fullWidth
+                            margin="normal"
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Contact du Site"
+                            name="email"
+                            value={subClientData.email}
+                            onChange={handleSubClientChange}
+                            fullWidth
+                            margin="normal"
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Adresse du site"
+                            name="Adresse"
+                            value={subClientData.name}
+                            onChange={handleSubClientChange}
+                            fullWidth
+                            margin="normal"
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Description"
+                            name="Description"
+                            value={subClientData.name}
+                            onChange={handleSubClientChange}
+                            fullWidth
+                            margin="normal"
+                          />
+                        </Grid>
+                      </>
+                    )}
+
                     <Grid item xs={12}>
                       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
                         <Button

@@ -13,7 +13,7 @@ app.use(express.json());
 app.use("/images", express.static(path.join(__dirname, "assets", "images")));
 
 // Connexion à MongoDB
-mongoose.connect("mongodb+srv://admin:admin123456789@cluster0.uy0so.mongodb.net/myApp?retryWrites=true&w=majority&appName=Cluster0", {
+mongoose.connect("mongodb://localhost:27017/myApp", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -23,11 +23,13 @@ mongoose.connect("mongodb+srv://admin:admin123456789@cluster0.uy0so.mongodb.net/
 // Routes
 const authRoutes = require("./routes/auth");
 const clientRoutes = require("./routes/clientlist");
+
 const clientAjoutRoute = require("./routes/clientajout");
 const forgotpassword = require("./nejdWork/routes/forgotpassword");
 const resetpassword = require("./nejdWork/routes/resetpassword");
 
 app.use("/api/clientajout", clientAjoutRoute);
+
 app.use("/api/auth", authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/forgotpassword', forgotpassword);

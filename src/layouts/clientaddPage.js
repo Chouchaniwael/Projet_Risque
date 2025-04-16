@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import MDTypography from "components/MDBox";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import MDButton from "components/MDButton";
 
 // Layouts
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -180,7 +181,7 @@ const ClientAddPage = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={6}>
+      <MDBox py={6} >
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -190,11 +191,12 @@ const ClientAddPage = () => {
                 py={3}
                 px={2}
                 variant="gradient"
-                bgColor="info"
+                bgColor="primary"
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                
+                <MDTypography variant="h3" color="white">
                   Ajouter un client
                 </MDTypography>
               </MDBox>
@@ -276,9 +278,7 @@ const ClientAddPage = () => {
                     </Grid>
                    
                        <Grid item xs={12}>
-                      <MDTypography align="left" mt={2} mb={1}>
-                        Logo de l’entreprise :
-                      </MDTypography>
+                      
                       <label htmlFor="upload-logo">
                         <input
                           accept="image/*"
@@ -287,14 +287,14 @@ const ClientAddPage = () => {
                           style={{ display: "none" }}
                           onChange={handleFileChange}
                         />
-                        <Button
+                        <MDButton
                           variant="contained"
                           color="primary"
                           component="span"
                           sx={{ mt: 1, color: "WHITE" }}
                         >
-                          Choisir un Logo
-                        </Button>
+                          Ajouter un Logo
+                        </MDButton>
                       </label>
 
                       {preview && (
@@ -373,28 +373,38 @@ const ClientAddPage = () => {
  </Grid>
  <Grid container spacing={2}>
   <Grid item xs={6}>
-    <Button
-      variant="contained"
+    <MDButton
+      variant="text"
       color="primary"
     
-      sx={{ mt: 1, color: "WHITE" }}
+      ssx={{
+        mt: 1,
+        color: "white", 
+        padding: "12px 50px", // Agrandir le bouton
+         // Augmenter la taille du texte
+      }}
       onClick={handleAddSubClient}
     >
       
       <Plus />Ajouter un site
-    </Button>
+    </MDButton>
   </Grid>
-  <Grid item xs={6}>
-    <Button
-      type="submit"
-      variant="contained"
-      color="primary"
+  <Grid item xs={6} container justifyContent="flex-end">
+  <MDButton
+    type="submit"
+    variant="contained"
+    color="primary"
+    sx={{
+      mt: 1,
+      color: "white", 
+      padding: "12px 50px", // Agrandir le bouton
+       // Augmenter la taille du texte
+    }}
+  >
+    Ajouter Client
+  </MDButton>
+</Grid>
 
-      sx={{ mt: 1, color: "WHITE" }}
-    >
-      Ajouter Client
-    </Button>
-  </Grid>
 </Grid>
 
                   </Grid>

@@ -31,6 +31,18 @@ const ClientAddPage = () => {
   const [preview, setPreview] = useState(null);
   const [hasSubClient, setHasSubClient] = useState(false);
 
+  const [errors, setErrors] = useState({
+    name: "",
+    address: "",
+    description: "",
+    secteur: "",
+    mail: "",
+    phone: "",
+    subClientErrors: [],
+  });
+
+  const navigate = useNavigate();
+
   // Handle adding a new sub-client
   const handleAddSubClient = () => {
     setSubClients([
@@ -55,18 +67,6 @@ const ClientAddPage = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const [errors, setErrors] = useState({
-    name: "",
-    address: "",
-    description:'',
-    secteur: "",
-    mail: "",
-    phone: "",
-    subClientErrors: [],
-  });
-
-  const navigate = useNavigate();
 
   // Handle changes for client data
   const handleChange = (e) => {
@@ -161,8 +161,19 @@ const ClientAddPage = () => {
     }
 
     try {
+      // Retrieve the token from localStorage or another secure place
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Token manquant");
+        return;
+      }
+
       const response = await fetch("http://localhost:5000/api/clientajout", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`, // Add token in the Authorization header
+        },
         body: form,
       });
 
@@ -181,7 +192,7 @@ const ClientAddPage = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={6} >
+      <MDBox py={6}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -195,7 +206,6 @@ const ClientAddPage = () => {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                
                 <MDTypography variant="h3" color="white">
                   Ajouter un client
                 </MDTypography>
@@ -276,9 +286,8 @@ const ClientAddPage = () => {
                         helperText={errors.phone}
                       />
                     </Grid>
-                   
-                       <Grid item xs={12}>
-                      
+
+                    <Grid item xs={12}>
                       <label htmlFor="upload-logo">
                         <input
                           accept="image/*"
@@ -309,104 +318,96 @@ const ClientAddPage = () => {
                     </Grid>
 
                     {/* Switch sous-client */}
-                    
-                       <Grid itemxs={12}>
-                    {/* Champs des sous-clients */}
-                    {subClients.length > 0 &&
-  subClients.map((subClient, index) => (
-    <div key={index}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Nom du site"
-            name="name"
-            value={subClient.name}
-            onChange={(e) => handleSubClientChange(index, e)}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Contact du Site"
-            name="email"
-            value={subClient.email}
-            onChange={(e) => handleSubClientChange(index, e)}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Adresse du site"
-            name="address"
-            value={subClient.address}
-            onChange={(e) => handleSubClientChange(index, e)}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Description"
-            name="description"
-            value={subClient.description}
-            onChange={(e) => handleSubClientChange(index, e)}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-      </Grid>
+                    <Grid item xs={12}>
+                      {subClients.length > 0 &&
+                        subClients.map((subClient, index) => (
+                          <div key={index}>
+                            <Grid container spacing={2}>
+                              <Grid item xs={12} md={6}>
+                                <TextField
+                                  label="Nom du site"
+                                  name="name"
+                                  value={subClient.name}
+                                  onChange={(e) => handleSubClientChange(index, e)}
+                                  fullWidth
+                                  margin="normal"
+                                />
+                              </Grid>
+                              <Grid item xs={12} md={6}>
+                                <TextField
+                                  label="Contact du Site"
+                                  name="email"
+                                  value={subClient.email}
+                                  onChange={(e) => handleSubClientChange(index, e)}
+                                  fullWidth
+                                  margin="normal"
+                                />
+                              </Grid>
+                              <Grid item xs={12} md={6}>
+                                <TextField
+                                  label="Adresse du site"
+                                  name="address"
+                                  value={subClient.address}
+                                  onChange={(e) => handleSubClientChange(index, e)}
+                                  fullWidth
+                                  margin="normal"
+                                />
+                              </Grid>
+                              <Grid item xs={12} md={6}>
+                                <TextField
+                                  label="Description"
+                                  name="description"
+                                  value={subClient.description}
+                                  onChange={(e) => handleSubClientChange(index, e)}
+                                  fullWidth
+                                  margin="normal"
+                                />
+                              </Grid>
+                            </Grid>
 
-      {/* Add a line between the subClients except the last one */}
-      {index < subClients.length - 1 && (
-        <div
-          style={{
-            height: '2px', 
-            backgroundColor: '#ccc', 
-            margin: '20px 0',
-          }}
-        />
-      )}
-    </div>
-  ))}
- </Grid>
- <Grid container spacing={2}>
-  <Grid item xs={6}>
-    <MDButton
-      variant="text"
-      color="primary"
-    
-      ssx={{
-        mt: 1,
-        color: "white", 
-        padding: "12px 50px", // Agrandir le bouton
-         // Augmenter la taille du texte
-      }}
-      onClick={handleAddSubClient}
-    >
-      
-      <Plus />Ajouter un site
-    </MDButton>
-  </Grid>
-  <Grid item xs={6} container justifyContent="flex-end">
-  <MDButton
-    type="submit"
-    variant="contained"
-    color="primary"
-    sx={{
-      mt: 1,
-      color: "white", 
-      padding: "12px 50px", // Agrandir le bouton
-       // Augmenter la taille du texte
-    }}
-  >
-    Ajouter Client
-  </MDButton>
-</Grid>
+                            {index < subClients.length - 1 && (
+                              <div
+                                style={{
+                                  height: '2px',
+                                  backgroundColor: '#ccc',
+                                  margin: '20px 0',
+                                }}
+                              />
+                            )}
+                          </div>
+                        ))}
+                    </Grid>
 
-</Grid>
-
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <MDButton
+                          variant="text"
+                          color="primary"
+                          sx={{
+                            mt: 1,
+                            color: "white",
+                            padding: "12px 50px",
+                          }}
+                          onClick={handleAddSubClient}
+                        >
+                          <Plus /> Ajouter un site
+                        </MDButton>
+                      </Grid>
+                      <Grid item xs={6} container justifyContent="flex-end">
+                        <MDButton
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          sx={{
+                            mt: 1,
+                            color: "white",
+                            padding: "12px 50px",
+                          }}
+                        >
+                          Ajouter Client
+                        </MDButton>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </form>
               </MDBox>

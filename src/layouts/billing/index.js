@@ -8,9 +8,7 @@
 
 Coded by www.creative-tim.com
 
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+=========================================================
 */
 
 // @mui material components
@@ -18,19 +16,14 @@ import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import Footer from "examples/Footer";
 
 // Material Dashboard 2 React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import MasterCard from "examples/Cards/MasterCard";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
+import { FaFireExtinguisher, FaShieldAlt, FaNetworkWired, FaWater, FaLock, FaFileAlt, FaBolt, FaVideo } from "react-icons/fa";
 
-// Billing page components
-import PaymentMethod from "layouts/billing/components/PaymentMethod";
-import Invoices from "layouts/billing/components/Invoices";
-import BillingInformation from "layouts/billing/components/BillingInformation";
-import Transactions from "layouts/billing/components/Transactions";
 
 function Billing() {
   return (
@@ -38,50 +31,68 @@ function Billing() {
       <DashboardNavbar absolute isMini />
       <MDBox mt={8}>
         <MDBox mb={3}>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} justifyContent="center">
             <Grid item xs={12} lg={8}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} xl={6}>
-                  <MasterCard number={4562112245947852} holder="jack peterson" expires="11/22" />
-                </Grid>
+              <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} md={6} xl={3}>
                   <DefaultInfoCard
-                    icon="account_balance"
-                    title="salary"
-                    description="Belong Interactive"
-                    value="+$2000"
+                     icon={<FaFireExtinguisher size={24} />}
+                    title="Incendie"
                   />
                 </Grid>
                 <Grid item xs={12} md={6} xl={3}>
                   <DefaultInfoCard
-                    icon="paypal"
-                    title="paypal"
-                    description="Freelance Payment"
-                    value="$455.00"
+                   icon= {<FaShieldAlt size={24} />}
+                    title="Sécurité physique"
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <PaymentMethod />
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaLock size={24} />}
+                    title="Contrôle d’accès"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaNetworkWired size={24} />}
+                    title="Connectivité réseau"
+                    description="19 Questions"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaWater size={24} />}
+                    title="Inondation"
+                    description="9 Questions"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaFileAlt size={24} />}
+                    title="Documents et équipements de sécurité"
+                    description="10 Questions"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaBolt size={24} />}
+                    title="Electricité et climatisation"
+                    description="8 questions"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <DefaultInfoCard
+                    icon={<FaVideo size={24} />}
+                    title="Monitoring du site"
+                    description="7 Questions"
+                  />
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} lg={4}>
-              <Invoices />
-            </Grid>
           </Grid>
         </MDBox>
-        <MDBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={7}>
-              <BillingInformation />
-            </Grid>
-            <Grid item xs={12} md={5}>
-              <Transactions />
-            </Grid>
-          </Grid>
-        </MDBox>
+        <MDBox mb={3}></MDBox>
       </MDBox>
-      <Footer />
     </DashboardLayout>
   );
 }

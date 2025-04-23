@@ -47,7 +47,8 @@ export default function useClientData() {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/clients");
+        const statut = true; // Définir le statut que tu veux filtrer
+        const response = await fetch(`http://localhost:5000/api/clients?statut=${statut}`);
         const clients = await response.json();
 
         const formattedRows = clients.map((client) => ({

@@ -63,19 +63,19 @@ const routes = [
   {
     type: "collapse",
     name: "Clients",
-    key: "tables",
+    key: "Clients",
     show:true,
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
+    route: "/Clients",
     component: <Tables />,
   },
   {
     type: "collapse",
     name: "Scénario de risque",
-    key: "billing",
+    key: "Risque",
     show:true,
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
+    route: "/Risque",
     component: <Billing />,
   },
   {

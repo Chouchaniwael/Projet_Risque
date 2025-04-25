@@ -42,6 +42,7 @@ import brandDark from "assets/images/logo-ct-dark.png";
 import ClientDetailPage from "./layouts/ClientDetailPage";
 import ClientAddPage from "layouts/clientaddPage";
 
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -184,6 +185,7 @@ export default function App() {
         {getRoutes(routes)}
         <Route path="/client/:id" element={<ClientDetailPage />} />
         <Route path="/client/ajouter" element={<ClientAddPage />} />
+      
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>

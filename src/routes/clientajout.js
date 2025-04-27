@@ -1,5 +1,3 @@
-// /routes/client.js ou clientRoute.js
-
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -20,31 +18,39 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ✅ Ajouter un client
+// ✅ Ajouter un client (corrigé)
 router.post("/", authenticateToken, upload.single("logo"), async (req, res) => {
   try {
     console.log("🧾 Utilisateur connecté :", req.user);
-    const { name, secteur, description, mail, phone, address } = req.body;
+    console.log("📦 Données reçues :", req.body);  // <--- Ajoute ceci
+    // Récupérer les données du corps de la requête
+    const { nom, secteur, description, mail, phone, address } = req.body;
     const logoPath = req.file ? req.file.filename : "";
 
+    // Définir les valeurs par défaut pour l'état et le statut
     let etat = "pending";
-    let statut = false;
+    let Statut = false;
 
+    // Vérifier le rôle de l'utilisateur connecté
     if (req.user.role === "admin" || req.user.role === "manager") {
       etat = "approved";
-      statut = true;
+      Statut = true;
     }
 
+    // Création du nouveau client
     const nouveauClient = new Client({
-      Nom: name,
+      Nom: nom,
       Logo: logoPath,
       Contact: phone,
       Secteur: secteur,
       Adresse: address,
+      Statut,
       etat,
-      Statut: statut,
-      createdBy: req.user.id,
+      Description: description,
+      Mail: mail,
     });
 
+    // Sauvegarder le client dans la base de données
     await nouveauClient.save();
     res.status(201).json({ message: "Client ajouté avec succès", client: nouveauClient });
   } catch (error) {
@@ -60,6 +66,7 @@ router.post("/:id/approve", authenticateToken, async (req, res) => {
   }
 
   try {
+    // Mettre à jour l'état du client en "approved"
     const client = await Client.findByIdAndUpdate(
       req.params.id,
       { etat: "approved", Statut: true },
@@ -78,6 +85,7 @@ router.post("/:id/reject", authenticateToken, async (req, res) => {
   }
 
   try {
+    // Mettre à jour l'état du client en "rejected"
     const client = await Client.findByIdAndUpdate(
       req.params.id,
       { etat: "rejected", Statut: false },

@@ -1,14 +1,18 @@
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema({
-  nom: { type: String, required: true, trim: true },
-  logo: { type: String, default: "" }, // chemin ou URL de l'image
-  contact: { type: String, trim: true },
-  secteur: { type: String, trim: true },
-  adresse: { type: String, trim: true },
-  statut: { type: Boolean, default: true },
+  Nom: { type: String, trim: true },          // "Nom"
+  Logo: { type: String, default: "", trim: true },             // "Logo"
+  Contact: { type: String, trim: true },                       // "Contact"
+  Secteur: { type: String, trim: true },                       // "Secteur"
+  Adresse: { type: String, trim: true },                       // "Adresse"
+  Statut: { type: Boolean, default: true },                    // "Statut"
+  etat: { type: String, default: "pending", trim: true },       // "etat" -> approved, pending, etc.
+  Description: { type: String, trim: true },                   // "Description"
+  Mail: { type: String, trim: true },                          // "Mail"
+  linkedin: { type: String, trim: true },                      // "linkedin"
 }, {
-  timestamps: true, // ajoute automatiquement createdAt et updatedAt
+  timestamps: true, // ajoute createdAt et updatedAt automatiquement
 });
 
 module.exports = mongoose.models.Client || mongoose.model("Client", clientSchema);

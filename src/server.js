@@ -52,12 +52,12 @@ const clientRoutes = require("./routes/clientlist");
 const clientAjoutRoute = require("./routes/clientajout");
 const forgotpassword = require("./nejdWork/routes/forgotpassword");
 const resetpassword = require("./nejdWork/routes/resetpassword");
-
+const siteRoutes = require("./routes/siteslist");
 // Routes publiques
 app.use("/api/auth", authRoutes);
 app.use('/api/forgotpassword', forgotpassword);
 app.use('/api/resetpassword', resetpassword);
-
+app.use("/api/sites", siteRoutes);
 // Appliquer le middleware d'authentification avant les routes protégées
 app.use("/api/clientajout", authenticateToken, clientAjoutRoute); // Appliquer le middleware seulement à cette route
 app.use("/api/clients", clientRoutes);

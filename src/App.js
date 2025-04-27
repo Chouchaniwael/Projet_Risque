@@ -41,6 +41,8 @@ import brandDark from "assets/images/logo-ct-dark.png";
 // Importation du fichier ClientDetailPage depuis le bon chemin
 import ClientDetailPage from "./layouts/ClientDetailPage";
 import ClientAddPage from "layouts/clientaddPage";
+import GestionRisque from "layouts/GestionRisque";
+import ClientGestionPage from "layouts/ClientGestionPage";
 
 
 export default function App() {
@@ -145,7 +147,7 @@ export default function App() {
             <Sidenav
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="Material Dashboard 2"
+              brandName="DEVOTEAM"
               routes={routes.filter(route => route.show)}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
@@ -169,9 +171,9 @@ export default function App() {
       {layout === "dashboard" && (
         <>
           <Sidenav
-            color={sidenavColor}
+            color="primary"
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Material Dashboard 2"
+            brandName="DEVOTEAM"
             routes={routes.filter(route => route.show)}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
@@ -185,7 +187,9 @@ export default function App() {
         {getRoutes(routes)}
         <Route path="/client/:id" element={<ClientDetailPage />} />
         <Route path="/client/ajouter" element={<ClientAddPage />} />
-      
+        <Route path="/GestionRisque/:id" element={<GestionRisque />} />
+        <Route path="/ClientProfilePage/:id" element={<ClientGestionPage />} />
+
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>

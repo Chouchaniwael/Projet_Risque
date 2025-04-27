@@ -13,6 +13,7 @@ import Footer from "examples/Footer";
 import RiskMatrixTable from "./RiskMatrixTable"; 
 
 const ClientDetailPage = () => {
+  
   const { id } = useParams();
   const [client, setClient] = useState(null);
   const navigate = useNavigate(); // Initialiser le hook useNavigate
@@ -35,7 +36,10 @@ const ClientDetailPage = () => {
 
   const handleClientInfoClick = () => {
     // Navigation vers la page d'informations du client avec l'ID comme paramètre
-    navigate(`/client-info/${id}`);
+    navigate(`/ClientProfilePage/${id}`);
+  };
+  const handleGestionRisqueClick = () => {
+    navigate(`/GestionRisque/${id}`);
   };
 
   if (!client) {
@@ -113,17 +117,17 @@ const ClientDetailPage = () => {
                   fullWidth
                   onClick={handleClientInfoClick} // Ajoutez cette ligne pour la redirection
                 >
-                  Information client
+                  Gestion du client
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <MDButton variant="gradient" color="info" fullWidth>
+                <MDButton variant="gradient" color="info" fullWidth  onClick={handleGestionRisqueClick}>
                   Gérer risque
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <MDButton variant="gradient" color="success" fullWidth>
-                  Exporter
+                  Gestion des sites
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>

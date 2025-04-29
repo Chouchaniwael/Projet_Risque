@@ -18,18 +18,18 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
-
+import { useParams } from "react-router-dom";
 // Custom Components
 import ClientHeader from "./ClientHeader";  // 🔥 ici on importe notre nouveau Header
 import SiteListData from "./SiteListData";  // Correct relative path from 'layouts' to 'SiteListData.js' inside the same folder
  
 function ClientGestionPage() {
   const [client, setClient] = useState(null);
-
+const { id } = useParams();
   useEffect(() => {
     const fetchClient = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/clients?name=Attijari`);
+        const response = await axios.get(`http://localhost:5000/api/clients?name=${id}`);
         
         const data = Array.isArray(response.data) ? response.data[0] : response.data;
 

@@ -17,8 +17,8 @@ Coded by www.creative-tim.com
 export default [
   {
 
-    name: "Sophie B.",
-    description: "Hi! I need more information..",
+    name: "Agence Sfax 2",
+    description: "Agence sfax ",
     action: {
       type: "internal",
       route: "/pages/profile/profile-overview",
@@ -56,14 +56,6 @@ export default [
       label: "Consulter",
     },
   },
-  {
-    name: "Nick Daniel",
-    description: "Hi! I need more information..",
-    action: {
-      type: "internal",
-      route: "/pages/profile/profile-overview",
-      color: "primary",
-      label: "Consulter",
-    },
-  },
+
+
 ];

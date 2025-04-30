@@ -17,8 +17,8 @@ Coded by www.creative-tim.com
 export default [
   {
 
-    name: "Agence Sfax 2",
-    description: "Agence sfax ",
+    name: "Siége ",
+    description: "Agence centrale ",
     action: {
       type: "internal",
       route: "/pages/profile/profile-overview",
@@ -27,8 +27,8 @@ export default [
     },
   },
   {
-    name: "Anne Marie",
-    description: "Awesome work, can you..",
+    name: "Agence Sousse",
+    description: "Agence A",
     action: {
       type: "internal",
       route: "/pages/profile/profile-overview",
@@ -37,8 +37,8 @@ export default [
     },
   },
   {
-    name: "Ivanna",
-    description: "About files I can..",
+    name: "Agence Sfax",
+    description: "Agence B",
     action: {
       type: "internal",
       route: "/pages/profile/profile-overview",
@@ -47,8 +47,8 @@ export default [
     },
   },
   {
-    name: "Peterson",
-    description: "Have a great afternoon..",
+    name: "Agence Djerba",
+    description: "Agence C",
     action: {
       type: "internal",
       route: "/pages/profile/profile-overview",

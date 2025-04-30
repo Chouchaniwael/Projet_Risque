@@ -6,7 +6,7 @@ import axios from "axios";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
-
+import { useTheme } from '@mui/material/styles';
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import profilesListData from "layouts/profile/data/profilesListData";
@@ -26,6 +26,7 @@ import SiteListData from "./SiteListData";  // Correct relative path from 'layou
 function ClientGestionPage() {
   const [client, setClient] = useState(null);
 const { id } = useParams();
+const theme = useTheme();
   useEffect(() => {
     const fetchClient = async () => {
       try {
@@ -62,36 +63,43 @@ const { id } = useParams();
       {client && <ClientHeader logo={client.logo} name={client.nom} />} {/* 🔥 ici on utilise notre nouveau header */}
       <MDBox mt={5} mb={3}>
         <Grid container spacing={1}>
-          <Grid item xs={12} md={6} xl={4}></Grid>
-          <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
-            <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
+         
+          <Grid item xs={12} md={6} xl={4} >
+           
             {client && (
-              <ProfileInfoCard
-                title="Informations du client"
-                description={client.description}
-                info={{
-                  fullName: client.nom,
-                  mobile: client.contact,
-                  email: client.mail,
-                  location: client.adresse,
-                }}
-                social={[
-                  {
-                    link: client.linkedin,
-                    icon: <FacebookIcon />,
-                    color: "facebook",
-                  },
-                ]}
-                action={{ route: "", tooltip: "Modifier le client" }}
-                shadow={false}
-              />
+           
+
+            
+             
+             <ProfileInfoCard
+               title={<span style={{ color: theme.palette.primary.main }}>Informations du client</span>}
+               description={client.description}
+               info={{
+                 fullName: client.nom,
+                 mobile: client.contact,
+                 email: client.mail,
+                 location: client.adresse,
+               }}
+               social={[
+                 {
+                   link: client.linkedin,
+                   icon: <FacebookIcon />,
+                   color: "facebook",
+                 },
+               ]}
+               action={{ route: "", tooltip: "Modifier le client" }}
+               shadow={false}
+             />
+             
             )}
             <Divider orientation="vertical" sx={{ mx: 0 }} />
            
           </Grid>
           <Grid item xs={12} xl={4}>
-              <ProfilesList title="Liste des sites" profiles={SiteListData} shadow={false} />
+              <ProfilesList  title={<span style={{ color: theme.palette.primary.main }}>Liste des sites</span>}
+              profiles={SiteListData} shadow={false} />
             </Grid>
+            <Grid item xs={12} md={6} xl={4}></Grid>
         </Grid>
         
       </MDBox>

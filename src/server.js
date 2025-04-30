@@ -39,7 +39,7 @@ function authenticateToken(req, res, next) {
 }
 
 // Connexion à MongoDB
-mongoose.connect("mongodb://localhost:27017/myApp", {
+mongoose.connect("mongodb+srv://Wael:HBITkyNurR3ZRqMr@cluster.kuxpkyx.mongodb.net/myApp", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -53,6 +53,7 @@ const clientAjoutRoute = require("./routes/clientajout");
 const forgotpassword = require("./nejdWork/routes/forgotpassword");
 const resetpassword = require("./nejdWork/routes/resetpassword");
 const siteRoutes = require("./routes/siteslist");
+const questionnaireRoutes = require('./routes/getquestionnaire_standard');
 // Routes publiques
 app.use("/api/auth", authRoutes);
 app.use('/api/forgotpassword', forgotpassword);
@@ -61,6 +62,6 @@ app.use("/api/sites", siteRoutes);
 // Appliquer le middleware d'authentification avant les routes protégées
 app.use("/api/clientajout", authenticateToken, clientAjoutRoute); // Appliquer le middleware seulement à cette route
 app.use("/api/clients", clientRoutes);
-
+app.use("/api/questionnaireRoutes", questionnaireRoutes);
 const PORT = 5000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`));

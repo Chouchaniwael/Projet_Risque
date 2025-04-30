@@ -34,11 +34,38 @@ import {
   FaBolt,
   FaVideo,
 } from "react-icons/fa";
+import { useState , useEffect } from "react";
+import Questionnaire_standard from "models/questionnaire_standard";
 
+const iconMap = {
+  Incendie: <FaFireExtinguisher size={20} />,
+  "Sécurité physique": <FaShieldAlt size={20} />,
+  "Contrôle d’accès": <FaLock size={20} />,
+  "Connectivité réseau": <FaNetworkWired size={20} />,
+  Inondation: <FaWater size={20} />,
+  "Documents et équipements de sécurité": <FaFileAlt size={20} />,
+  "Electricité et climatisation": <FaBolt size={20} />,
+  "Monitoring du site": <FaVideo size={20} />,
+};
 function Securite() {
-  // Fonction pour créer un item avec animation
+  const [questionnaires, setQuestionnaires] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/questionnaireRoutes");
+        const data = await response.json();
+        setQuestionnaires(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des questionnaires :", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const renderCard = (icon, title, description = "") => (
-    <Grid item xs={12} sm={6} md={4} lg={3}>
+    <Grid item xs={12} sm={6} md={4} lg={3} key={title}>
       <div
         style={{
           transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -86,30 +113,18 @@ function Securite() {
         <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} lg={10}>
             <Grid container spacing={3} justifyContent="center">
-              {renderCard(<FaFireExtinguisher size={20} />, "Incendie")}
-              {renderCard(<FaShieldAlt size={20} />, "Sécurité physique")}
-              {renderCard(<FaLock size={20} />, "Contrôle d’accès")}
-              {renderCard(
-                <FaNetworkWired size={20} />,
-                "Connectivité réseau",
-                "19 Questions"
+              {questionnaires.map((q) =>
+                renderCard(
+                  iconMap[q.risqueAssocie || ""] || <FaFileAlt size={20} />,
+                  q.risqueAssocie || q.titre,
+                  `${q.sections?.reduce((acc, s) => acc + (s.questions?.length || 0), 0)} Questions`
+                )
               )}
-              {renderCard(<FaWater size={20} />, "Inondation", "9 Questions")}
-              {renderCard(
-                <FaFileAlt size={20} />,
-                "Documents et équipements de sécurité",
-                "10 Questions"
-              )}
-              {renderCard(
-                <FaBolt size={20} />,
-                "Electricité et climatisation",
-                "8 Questions"
-              )}
-              {renderCard(<FaVideo size={32} />, "Monitoring du site", "7 Questions")}
             </Grid>
           </Grid>
         </Grid>
       </MDBox>
+      <Footer />
     </DashboardLayout>
   );
 }

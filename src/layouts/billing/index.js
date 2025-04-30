@@ -1,16 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
-=========================================================
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -34,21 +21,24 @@ import {
   FaBolt,
   FaVideo,
 } from "react-icons/fa";
-import { useState , useEffect } from "react";
-import Questionnaire_standard from "models/questionnaire_standard";
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const iconMap = {
-  Incendie: <FaFireExtinguisher size={20} />,
+  "Incendie": <FaFireExtinguisher size={20} />,
   "Sécurité physique": <FaShieldAlt size={20} />,
   "Contrôle d’accès": <FaLock size={20} />,
   "Connectivité réseau": <FaNetworkWired size={20} />,
-  Inondation: <FaWater size={20} />,
+  "Inondation": <FaWater size={20} />,
   "Documents et équipements de sécurité": <FaFileAlt size={20} />,
   "Electricité et climatisation": <FaBolt size={20} />,
   "Monitoring du site": <FaVideo size={20} />,
 };
-function Securite() {
+
+function DetailQuestionnaire() {
   const [questionnaires, setQuestionnaires] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +54,21 @@ function Securite() {
     fetchData();
   }, []);
 
-  const renderCard = (icon, title, description = "") => (
-    <Grid item xs={12} sm={6} md={4} lg={3} key={title}>
+  const detailQuestionnaire = (titre) => {
+    navigate(`/DetailQuestionnaire/${titre}`);
+  };
+
+  const renderCard = (icon, title, description = "", onClick = null) => (
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={4}
+      lg={3}
+      key={title}
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : "default" }}
+    >
       <div
         style={{
           transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -115,9 +118,10 @@ function Securite() {
             <Grid container spacing={3} justifyContent="center">
               {questionnaires.map((q) =>
                 renderCard(
-                  iconMap[q.risqueAssocie || ""] || <FaFileAlt size={20} />,
-                  q.risqueAssocie || q.titre,
-                  `${q.sections?.reduce((acc, s) => acc + (s.questions?.length || 0), 0)} Questions`
+                  iconMap[q.titre] || <FaFileAlt />,
+                  q.titre,
+                  `${q.sections?.[0]?.questions?.length || 0} Questions`,
+                  () => detailQuestionnaire(q.titre)
                 )
               )}
             </Grid>
@@ -129,4 +133,4 @@ function Securite() {
   );
 }
 
-export default Securite;
+export default DetailQuestionnaire;

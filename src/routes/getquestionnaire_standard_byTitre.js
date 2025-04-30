@@ -2,16 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Questionnaire_standard = require('../models/questionnaire_standard');
 
-// GET all questionnaires or filter by titre
+// GET all questionnaires
 router.get('/', async (req, res) => {
   try {
-    const filter = {}; // Declare filter before using it
-
-    const { titre } = req.query;
-    if (titre !== undefined) {
-      filter.titre = titre;
-    }
-
+    // Optionally use query parameters for filtering or pagination
+    const filter = {}; // You can modify this based on req.query
     const questionnaires = await Questionnaire_standard.find(filter);
     res.json(questionnaires);
   } catch (err) {

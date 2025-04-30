@@ -54,6 +54,7 @@ const forgotpassword = require("./nejdWork/routes/forgotpassword");
 const resetpassword = require("./nejdWork/routes/resetpassword");
 const siteRoutes = require("./routes/siteslist");
 const questionnaireRoutes = require('./routes/getquestionnaire_standard');
+const getquestionnaire_standard_byTitre = require('./routes/getquestionnaire_standard_byTitre')
 // Routes publiques
 app.use("/api/auth", authRoutes);
 app.use('/api/forgotpassword', forgotpassword);
@@ -63,5 +64,7 @@ app.use("/api/sites", siteRoutes);
 app.use("/api/clientajout", authenticateToken, clientAjoutRoute); // Appliquer le middleware seulement à cette route
 app.use("/api/clients", clientRoutes);
 app.use("/api/questionnaireRoutes", questionnaireRoutes);
+app.use("/api/getquestionnaire_standard_byTitre", getquestionnaire_standard_byTitre);
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`));

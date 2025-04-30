@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
-
 // react-router components
 import { useLocation, Link } from "react-router-dom";
 
@@ -118,7 +117,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
       if (transparentNavbar && !light) {
         colorValue = darkMode ? rgba(text.main, 0.6) : text.main;
       }
-
       return colorValue;
     },
   });
@@ -126,7 +124,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
-      color="inherit"
+      color="primary"
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>

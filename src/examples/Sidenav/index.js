@@ -10,20 +10,18 @@ import PropTypes from "prop-types";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
-import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
-
+import Icon from "@mui/material/Icon";
 // Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
-
+import logo from '../../assets/images/Devoteam_Logo.webp'; // Ajuste le chemin relatif si nécessaire
 // Material Dashboard 2 React context
 import {
   useMaterialUIController,
@@ -95,7 +93,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       returnValue = (
         <MDTypography
           key={key}
-          color={textColor}
+          color="primary"
           display="block"
           variant="caption"
           fontWeight="bold"
@@ -139,19 +137,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           onClick={closeSidenav}
           sx={{ cursor: "pointer" }}
         >
-          <MDTypography variant="h6" color="secondary">
+          <MDTypography variant="h6" color="primary">
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {/* Remplacer l'icône par un logo en .webp */}
+          <MDBox component="img" src={logo} alt="Logo" width="10rem" />
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
-            </MDTypography>
+           
           </MDBox>
         </MDBox>
       </MDBox>
@@ -174,7 +171,7 @@ Sidenav.defaultProps = {
 
 // Typechecking props for the Sidenav
 Sidenav.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.oneOf(["primary"]),
   brand: PropTypes.string,
   brandName: PropTypes.string.isRequired,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,

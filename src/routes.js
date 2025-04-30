@@ -29,7 +29,6 @@ const getUserRole = () => {
   return null;
 };
 
-useEffect()
 const routes = [
   {
     type: "collapse",

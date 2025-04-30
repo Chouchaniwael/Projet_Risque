@@ -1,14 +1,34 @@
-// models/Site.js
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const SiteSchema = new mongoose.Schema({
-  Nom: { type: String, required: true },        
-  Adresse: { type: String, required: true },    
-  Type: { type: String, required: true },        
-  ClientNom: { type: String, required: true },    
-  Statut: { type: Boolean, default: true },      
-  Contact: { type: String, required: true },      
-  date_creation: { type: Date, default: Date.now } 
+  adresse: {
+    type: String,
+  },
+  ClientNom: {
+    type: String,
+  },
+  Contact: {
+    type: String,
+  },
+  etat: {
+    type: Boolean,
+    default: true,
+  },
+  Nom: {
+    type: String,
+  },
+  mail: {
+    type: String,
+  },
+  ouvert: {
+    type: Boolean,
+    default: true,
+  },
+  Staut: {
+    type: String, // Ici, "Staut" est une chaîne et non un booléen
+    default: "true", // Valeur par défaut en tant que chaîne
+  },
 });
 
-module.exports = mongoose.model("sites", SiteSchema);
+// Le troisième argument "sites" garantit que la collection utilisée sera "sites"
+export default mongoose.model("Site", SiteSchema);

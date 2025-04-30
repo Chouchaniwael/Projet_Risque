@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
-
-
+import { jwtDecode } from "jwt-decode";
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
@@ -16,6 +14,7 @@ import CentreValidation from "layouts/authentication/CentreValidation";
 import ForgotPassword from "nejdWork/forgot_password";
 import ResetPassword from "nejdWork/reset_password";
 import Logout from "layouts/Logout";
+
 // @mui icons
 import Icon from "@mui/material/Icon";
 
@@ -24,12 +23,11 @@ const getUserRole = () => {
   const token = localStorage.getItem("token");
   if (token) {
     const decodedToken = jwtDecode(token);
-    return decodedToken.role;  // Récupère le rôle de l'utilisateur
+    return decodedToken.role; // Récupère le rôle de l'utilisateur
   }
   return null;
 };
 
-useEffect()
 const routes = [
   {
     type: "collapse",
@@ -88,8 +86,8 @@ const routes = [
     type: "collapse",
     key: "Validation",
     name: "Centre de validation",
-    show: getUserRole() === "Manager", 
-    icon: <Icon fontSize="small">check_circle</Icon>, 
+    show: getUserRole() === "Manager",
+    icon: <Icon fontSize="small">check_circle</Icon>,
     route: "/Validation",
     component: <CentreValidation />,
   },
@@ -116,9 +114,8 @@ const routes = [
     show: true,
     icon: <Icon fontSize="small">logout</Icon>,
     route: "/Déconnexion",
-    component: <Logout />, // Utiliser le composant de déconnexion
-  }
-  
+    component: <Logout />,
+  },
 ];
 
 export default routes;

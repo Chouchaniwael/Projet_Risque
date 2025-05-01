@@ -25,6 +25,16 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Fonction slugify
+function slugify(str) {
+  return str
+    .normalize("NFD") // décompose les accents
+    .replace(/[\u0300-\u036f]/g, "") // supprime les accents
+    .toLowerCase()
+    .replace(/\s+/g, '-')  // remplace les espaces par des tirets
+    .replace(/[^\w-]+/g, '');  // supprime les caractères spéciaux
+}
+
 const iconMap = {
   "Incendie": <FaFireExtinguisher size={20} />,
   "Sécurité physique": <FaShieldAlt size={20} />,
@@ -55,7 +65,7 @@ function DetailQuestionnaire() {
   }, []);
 
   const detailQuestionnaire = (titre) => {
-    navigate(`/DetailQuestionnaire/${titre}`);
+    navigate(`/DetailQuestionnaire/${slugify(titre)}`);
   };
 
   const renderCard = (icon, title, description = "", onClick = null) => (

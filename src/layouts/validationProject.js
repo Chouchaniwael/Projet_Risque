@@ -10,8 +10,13 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import HelpIcon from "@mui/icons-material/Help";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -86,7 +91,6 @@ const ValidationProject = () => {
           questionnaires: fullData, // send array of full questionnaires
         }),
       });
-  
       alert("Questionnaires enregistrés avec succès !");
     } catch (error) {
       console.error("Erreur lors de l'enregistrement :", error);
@@ -121,7 +125,7 @@ const ValidationProject = () => {
                           mb={2}
                         >
                           <Typography>• {question.texte}</Typography>
-                          <FormControl size="small" sx={{ minWidth: 100 }}>
+                          <FormControl size="small" sx={{ minWidth: 200 }}>
                             <InputLabel>Réponse</InputLabel>
                             <Select
                               value={answers[questionId] || ""}
@@ -129,10 +133,29 @@ const ValidationProject = () => {
                                 handleSelectChange(questionId, e.target.value)
                               }
                               label="Réponse"
+                              sx={{
+                                fontSize: "1rem",
+                                padding: "10px",
+                              }}
                             >
-                              <MenuItem value="Oui">Oui</MenuItem>
-                              <MenuItem value="Non">Non</MenuItem>
-                              <MenuItem value="N/A">NA</MenuItem>
+                              <MenuItem value="Oui">
+                                <ListItemIcon>
+                                  <CheckIcon sx={{ color: "green" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Oui" />
+                              </MenuItem>
+                              <MenuItem value="Non">
+                                <ListItemIcon>
+                                  <CloseIcon sx={{ color: "red" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Non" />
+                              </MenuItem>
+                              <MenuItem value="N/A">
+                                <ListItemIcon>
+                                  <HelpIcon sx={{ color: "gray" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="NA" />
+                              </MenuItem>
                             </Select>
                           </FormControl>
                         </MDBox>
@@ -146,12 +169,13 @@ const ValidationProject = () => {
         </Grid>
       </MDBox>
       <MDBox mt={4} display="flex" justifyContent="center">
-  <MDButton color="info" onClick={handleSave}>
-    Enregistrer
-  </MDButton>
-</MDBox>
+        <MDButton color="info" onClick={handleSave}>
+          Enregistrer
+        </MDButton>
+      </MDBox>
       <Footer />
     </DashboardLayout>
   );
-}
+};
+
 export default ValidationProject;

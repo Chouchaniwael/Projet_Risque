@@ -24,7 +24,7 @@ function authenticateToken(req, res, next) {
         console.log("⛔ Aucun token trouvé");
         return res.status(401).json({ error: "Token manquant" });
     }
-
+//test
     // Vérification du token
     jwt.verify(token, process.env.JWT_SECRET || "SECRET_KEY", (err, user) => {
         if (err) {

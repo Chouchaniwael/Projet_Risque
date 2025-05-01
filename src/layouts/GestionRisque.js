@@ -5,7 +5,7 @@ import MDAvatar from "components/MDAvatar";
 import defaultImage from "assets/images/team-3.jpg";
 import MDBox from "components/MDBox";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
-import MDButton from 'components/MDButton'
+import MDButton from 'components/MDButton';
 import {
   FaFireExtinguisher,
   FaShieldAlt,
@@ -85,20 +85,23 @@ const GestionRisque = () => {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox px={3} py={2}>
-        <Card sx={{ mb: 4 }}>
+        <Card sx={{ mb: 4, width: "100%" }}>
           <CardContent>
-            <MDBox display="flex" flexDirection="column" alignItems="center" px={5}>
+            <MDBox display="flex" alignItems="center" justifyContent="flex-start" px={5}>
               <MDAvatar
                 src={client.Logo ? `http://localhost:5000/images/${client.Logo}` : defaultImage}
                 name={client.Nom}
-                size="xxl"
+                size="lg"
+                sx={{ marginRight: 3 }}
               />
-              <Typography variant="h5" align="center" sx={{ mt: 2 }}>
-                {client.Nom}
-              </Typography>
-              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                Veuillez sélectionner les questionnaires à appliquer.
-              </Typography>
+              <MDBox>
+                <Typography variant="h5" align="left">
+                  {client.Nom}
+                </Typography>
+                <Typography variant="body1" align="left" sx={{ mt: 1 }}>
+                  Veuillez sélectionner les questionnaires à appliquer.
+                </Typography>
+              </MDBox>
             </MDBox>
           </CardContent>
         </Card>
@@ -145,7 +148,6 @@ const GestionRisque = () => {
       <Footer />
     </DashboardLayout>
   );
-  
-}  
+};
 
 export default GestionRisque;

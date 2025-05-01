@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'; // Importation de axios
+import axios from 'axios';
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
@@ -9,6 +9,9 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import { Button } from '@mui/material'; // Utilisation des boutons Material-UI
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icône pour confirmer
+import CancelIcon from '@mui/icons-material/Cancel'; // Icône pour rejeter
 
 // Remplacer par l'URL de ton API Express
 const apiUrl = "http://localhost:5000/api/clients"; // Remplace avec l'URL de ton backend
@@ -72,7 +75,7 @@ function CentreValidation() {
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <Card>
+            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
               <MDBox
                 mx={2}
                 mt={-3}
@@ -84,11 +87,9 @@ function CentreValidation() {
                 coloredShadow="info"
               >
                 <MDBox display="flex" justifyContent="space-between" alignItems="center">
-                  <MDTypography variant="h6" color="white">
+                  <MDTypography variant="h6" color="white" fontWeight="bold">
                     Liste des Clients à valider
                   </MDTypography>
-
-                  
                 </MDBox>
               </MDBox>
 
@@ -97,11 +98,11 @@ function CentreValidation() {
                 <Grid container spacing={3}>
                   {clients.map((client) => (
                     <Grid item xs={12} sm={6} md={4} key={client._id}>
-                      <Card>
+                      <Card sx={{ boxShadow: 3, borderRadius: 2, padding: 2 }}>
                         <MDBox p={2}>
-                          <MDTypography variant="h6">{client.name}</MDTypography>
-                          <MDBox display="flex" justifyContent="space-between">
-                            <MDTypography variant="body2" color="textSecondary">
+                          <MDTypography variant="h6" fontWeight="bold" color="textPrimary">{client.name}</MDTypography>
+                          <MDBox display="flex" justifyContent="space-between" mt={1}>
+                            <MDTypography variant="body2" color={client.statut ? "green" : "red"} fontWeight="medium">
                               Statut: {client.statut ? "Confirmé" : "Non confirmé"}
                             </MDTypography>
                           </MDBox>
@@ -114,25 +115,29 @@ function CentreValidation() {
                             <MDTypography variant="body2" color="textSecondary">
                               Date: {new Date(client.createdAt).toLocaleDateString()}
                             </MDTypography>
-                            
                           </MDBox>
 
                           {/* Boutons de confirmation et de rejet */}
                           <MDBox display="flex" justifyContent="flex-end" mt={2}>
-                            <Icon
-                              fontSize="small"
-                              sx={{ cursor: "pointer", color: "green" }}
+                            <Button
+                              variant="icon "
+                              color="success" // Correctement utilisé pour obtenir du vert
+                              sx={{ marginRight: 2 }}
+                              startIcon={
+                                <CheckCircleIcon sx={{ color: 'green' }} /> // Applique la couleur verte uniquement à l'icône
+                              } // Icône de confirmation
                               onClick={() => handleConfirm(client._id)}
                             >
-                              check_circle
-                            </Icon>
-                            <Icon
-                              fontSize="small"
-                              sx={{ cursor: "pointer", color: "red", ml: 2 }}
+                              Confirmer
+                            </Button>
+                            <Button
+                              variant="icon "
+                              color="error" // Correctement utilisé pour obtenir du rouge
+                              startIcon={<CancelIcon sx={{ color: 'red', fontSize: 30  }}/>} // Icône de rejet
                               onClick={() => handleReject(client._id)}
                             >
-                              cancel
-                            </Icon>
+                              Rejeter
+                            </Button>
                           </MDBox>
                         </MDBox>
                       </Card>

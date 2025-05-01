@@ -44,6 +44,7 @@ import ClientAddPage from "layouts/clientaddPage";
 import GestionRisque from "layouts/GestionRisque";
 import ClientGestionPage from "layouts/ClientGestionPage";
 import DetailQuestionnaire from "layouts/billing/questionaire_details"
+import ValidationProject from "layouts/validationProject";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -190,6 +191,7 @@ export default function App() {
         <Route path="/GestionRisque/:id" element={<GestionRisque />} />
         <Route path="/ClientProfilePage/:id" element={<ClientGestionPage />} />
         <Route path="/DetailQuestionnaire/:titre" element={<DetailQuestionnaire />} />
+        <Route path="/GestionRisque/:id/ValidationProject" element={<ValidationProject />} />
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>

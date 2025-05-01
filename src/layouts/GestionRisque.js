@@ -48,7 +48,7 @@ const GestionRisque = () => {
         console.error("Erreur lors du chargement du client :", error);
       }
     };
-
+  
     const fetchQuestionnaires = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/questionnaireRoutes");
@@ -58,10 +58,23 @@ const GestionRisque = () => {
         console.error("Erreur lors du chargement des questionnaires :", error);
       }
     };
-
+  
+    const fetchSelectedQuestionnaires = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/questionnaire_projet?projet=${id}`);
+        const data = await response.json();
+        const existing = data.map((q) => q.titre); // get titles of selected questionnaires
+        setSelected(existing);
+      } catch (error) {
+        console.error("Erreur lors du chargement des questionnaires du projet :", error);
+      }
+    };
+  
     fetchClient();
     fetchQuestionnaires();
+    fetchSelectedQuestionnaires(); // 🔁 Include this call
   }, [id]);
+  
 
   const toggleSelect = (titre) => {
     setSelected((prev) =>

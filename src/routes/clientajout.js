@@ -30,6 +30,7 @@ router.post("/", authenticateToken, upload.single("logo"), async (req, res) => {
     // Définir les valeurs par défaut pour l'état et le statut
     let etat = "pending";
     let Statut = false;
+    t
 
     // Vérifier le rôle de l'utilisateur connecté
     if (req.user.role === "admin" || req.user.role === "manager") {

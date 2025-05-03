@@ -14,7 +14,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icône pour co
 import CancelIcon from '@mui/icons-material/Cancel'; // Icône pour rejeter
 
 // Remplacer par l'URL de ton API Express
-const apiUrl = "http://localhost:5000/api/clients"; // Remplace avec l'URL de ton backend
+const apiUrl = "http://localhost:5000/api"; 
 
 function CentreValidation() {
   const [clients, setClients] = useState([]);
@@ -23,7 +23,7 @@ function CentreValidation() {
   // Fonction pour récupérer les clients depuis l'API
   const loadClients = async () => {
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await axios.get(`${apiUrl}/clients`, {
         params: {
           statut: false // Par défaut, on récupère les clients non confirmés
         }
@@ -39,33 +39,19 @@ function CentreValidation() {
     loadClients();
   }, []);
 
-  // Fonction pour gérer la confirmation d'un client
+  // Fonction pour confirmer un client
   const handleConfirm = async (clientId) => {
     try {
-      const updatedClients = clients.map(client => 
-        client._id === clientId ? { ...client, statut: true } : client
-      );
-      setClients(updatedClients);
-
-      // Envoyer la mise à jour au backend (si nécessaire)
-      await axios.put(`${apiUrl}/${clientId}`, { statut: true });
+      // Envoie la requête PUT à l'API pour confirmer le client
+      const response = await axios.put(`http://localhost:5000/api/workflow/clients/${clientId}/confirm`);
+      if (response.status === 200) {
+        // Mettre à jour la liste des clients avec le statut modifié
+        setClients(clients.map(client => 
+          client._id === clientId ? { ...client, Statut: true } : client
+        ));
+      }
     } catch (error) {
       console.error("Erreur lors de la confirmation du client", error);
-    }
-  };
-
-  // Fonction pour gérer le rejet d'un client
-  const handleReject = async (clientId) => {
-    try {
-      const updatedClients = clients.map(client => 
-        client._id === clientId ? { ...client, statut: false } : client
-      );
-      setClients(updatedClients);
-
-      // Envoyer la mise à jour au backend (si nécessaire)
-      await axios.put(`${apiUrl}/${clientId}`, { statut: false });
-    } catch (error) {
-      console.error("Erreur lors du rejet du client", error);
     }
   };
 
@@ -100,17 +86,19 @@ function CentreValidation() {
                     <Grid item xs={12} sm={6} md={4} key={client._id}>
                       <Card sx={{ boxShadow: 3, borderRadius: 2, padding: 2 }}>
                         <MDBox p={2}>
-                          <MDTypography variant="h6" fontWeight="bold" color="textPrimary">{client.name}</MDTypography>
+                          <MDTypography variant="h6" fontWeight="bold" color="textPrimary">
+                            {client.Nom}
+                          </MDTypography>
                           <MDBox display="flex" justifyContent="space-between" mt={1}>
-                            <MDTypography variant="body2" color={client.statut ? "green" : "red"} fontWeight="medium">
-                              Statut: {client.statut ? "Confirmé" : "Non confirmé"}
+                            <MDTypography variant="body2" color={client.Statut ? "green" : "red"} fontWeight="medium">
+                              Statut: {client.Statut ? "Confirmé" : "Non confirmé"}
                             </MDTypography>
                           </MDBox>
 
                           {/* Afficher le secteur et la date */}
                           <MDBox display="flex" justifyContent="space-between" mt={2}>
                             <MDTypography variant="body2" color="textSecondary">
-                              Nom: {client.Nom}
+                              Secteur: {client.Secteur}
                             </MDTypography>
                             <MDTypography variant="body2" color="textSecondary">
                               Date: {new Date(client.createdAt).toLocaleDateString()}
@@ -120,21 +108,18 @@ function CentreValidation() {
                           {/* Boutons de confirmation et de rejet */}
                           <MDBox display="flex" justifyContent="flex-end" mt={2}>
                             <Button
-                              variant="icon "
-                              color="success" // Correctement utilisé pour obtenir du vert
+                              variant="icon"
+                              color="success"
                               sx={{ marginRight: 2 }}
-                              startIcon={
-                                <CheckCircleIcon sx={{ color: 'green' }} /> // Applique la couleur verte uniquement à l'icône
-                              } // Icône de confirmation
-                              onClick={() => handleConfirm(client._id)}
+                              startIcon={<CheckCircleIcon sx={{ color: 'green' }} />}
+                              onClick={() => handleConfirm(client._id)} // Appeler la fonction de confirmation avec l'ID du client
                             >
                               Confirmer
                             </Button>
                             <Button
-                              variant="icon "
-                              color="error" // Correctement utilisé pour obtenir du rouge
-                              startIcon={<CancelIcon sx={{ color: 'red', fontSize: 30  }}/>} // Icône de rejet
-                              onClick={() => handleReject(client._id)}
+                              variant="icon"
+                              color="error"
+                              startIcon={<CancelIcon sx={{ color: 'red', fontSize: 30 }} />}
                             >
                               Rejeter
                             </Button>
@@ -149,6 +134,7 @@ function CentreValidation() {
           </Grid>
         </Grid>
       </MDBox>
+      <Footer />
     </DashboardLayout>
   );
 }

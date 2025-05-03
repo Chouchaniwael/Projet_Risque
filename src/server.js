@@ -56,6 +56,8 @@ const siteRoutes = require("./routes/siteslist");
 const questionnaireRoutes = require('./routes/getquestionnaire_standard');
 const getquestionnaire_standard_byTitre = require('./routes/getquestionnaire_standard_byTitre')
 const ajouter_questionnaire_projet = require('./routes/ajouter_questionnaire_projet')
+const workflowRoutes = require("./routes/workflow"); // Ajouter le fichier workflow.js
+
 // Routes publiques
 app.use("/api/auth", authRoutes);
 app.use('/api/forgotpassword', forgotpassword);
@@ -67,6 +69,7 @@ app.use("/api/clients", clientRoutes);
 app.use("/api/questionnaireRoutes", questionnaireRoutes);
 app.use("/api/getquestionnaire_standard_byTitre", getquestionnaire_standard_byTitre);
 app.use("/api/ajouter_questionnaire_projet",ajouter_questionnaire_projet);
+app.use("/api/workflow", workflowRoutes); // Ajouter la route workflow
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`));

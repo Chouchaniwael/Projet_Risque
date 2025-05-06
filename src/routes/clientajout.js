@@ -49,6 +49,7 @@ router.post("/", authenticateToken, upload.single("logo"), async (req, res) => {
       etat,
       Description: description,
       Mail: mail,
+      etatarchivage: 0, // 0: non archivé, 1: archivé
     });
 
     // Sauvegarder le client dans la base de données

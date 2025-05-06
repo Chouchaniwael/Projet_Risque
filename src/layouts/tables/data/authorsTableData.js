@@ -1,14 +1,17 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/function-component-definition */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDBadge from "components/MDBadge";
 import { useNavigate } from "react-router-dom";
 import defaultImage from "assets/images/team-3.jpg";
-import { Circle, CheckCircle, PanoramaFishEye } from "@mui/icons-material";  // Importation des icônes nécessaires
-import ContrastIcon from '@mui/icons-material/Contrast';
+import { Circle, CheckCircle, PanoramaFishEye } from "@mui/icons-material";
+import ContrastIcon from "@mui/icons-material/Contrast";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function useClientData() {
   const navigate = useNavigate();
@@ -46,63 +49,71 @@ export default function useClientData() {
     rows: [],
   });
 
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/clients?statut=true`);
-        const clients = await response.json();
+  const fetchClients = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/clients?statut=true`);
+      const clients = await response.json();
 
-        const rowsWithAnalyse = await Promise.all(
-          clients.map(async (client) => {
-            let statutAnalyse = "Nouveau";
+      const rowsWithAnalyse = await Promise.all(
+        clients.map(async (client) => {
+          let statutAnalyse = "Nouveau";
 
-            try {
-              const resQ = await fetch(`http://localhost:5000/api/questionnaire_projet?projet=${client.Nom}`);
-              const data = await resQ.json();
-              
-              if (Array.isArray(data) && data.length > 0) {
-                statutAnalyse = getAnalyseStatus(data[0].analyse);
-              }
-            } catch (err) {
-              console.error(`Erreur lors du chargement des questionnaires pour ${client.Nom}:`, err);
+          try {
+            const resQ = await fetch(
+              `http://localhost:5000/api/questionnaire_projet?projet=${client.Nom}`
+            );
+            const data = await resQ.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+              statutAnalyse = getAnalyseStatus(data[0].analyse);
             }
+          } catch (err) {
+            console.error(`Erreur lors du chargement des questionnaires pour ${client.Nom}:`, err);
+          }
 
-            return {
-              author: (
-                <Author
-                  image={
-                    client.Logo && client.Logo.trim() !== ""
-                      ? `http://localhost:5000/images/${client.Logo}`
-                      : defaultImage
-                  }
-                  name={client.Nom}
-                  email={client.Contact || "email@indisponible.com"}
-                />
-              ),
-              function: <Job title={client.Secteur} description={client.Adresse} />,
+          return {
+            author: (
+              <Author
+                image={
+                  client.Logo && client.Logo.trim() !== ""
+                    ? `http://localhost:5000/images/${client.Logo}`
+                    : defaultImage
+                }
+                name={client.Nom}
+                email={client.Contact || "email@indisponible.com"}
+              />
+            ),
+            function: <Job title={client.Secteur} description={client.Adresse} />,
 
-              status: (
-                <MDBadge
-                  badgeContent={client.Statut ? "Actif" : "Inactif"}
-                  color={client.Statut ? "success" : "dark"}
-                  variant="gradient"
-                  size="sm"
-                />
-              ),
+            status: (
+              <MDBadge
+                badgeContent={client.Statut ? "Actif" : "Inactif"}
+                color={client.Statut ? "success" : "dark"}
+                variant="gradient"
+                size="sm"
+              />
+            ),
 
-              analyseStatus: (
-                <MDBox display="flex" alignItems="center">
-                  {statutAnalyse === "Nouveau" && <PanoramaFishEye fontSize="large" color="secondary" />}
-                  {statutAnalyse === "En cours" && <ContrastIcon fontSize="large" color="warning" />}
-                  {statutAnalyse === "Complété" && <CheckCircle fontSize="large" color="success" />}
-                </MDBox>
-              ),
-              employed: (
-                <MDTypography variant="caption" color="text" fontWeight="medium">
-                  {new Date(client.createdAt).toLocaleDateString("fr-FR")}
-                </MDTypography>
-              ),
-              action: (
+            analyseStatus: (
+              <MDBox display="flex" alignItems="center">
+                {statutAnalyse === "Nouveau" && (
+                  <PanoramaFishEye fontSize="large" color="secondary" />
+                )}
+                {statutAnalyse === "En cours" && (
+                  <ContrastIcon fontSize="large" color="warning" />
+                )}
+                {statutAnalyse === "Complété" && (
+                  <CheckCircle fontSize="large" color="success" />
+                )}
+              </MDBox>
+            ),
+            employed: (
+              <MDTypography variant="caption" color="text" fontWeight="medium">
+                {new Date(client.createdAt).toLocaleDateString("fr-FR")}
+              </MDTypography>
+            ),
+            action: (
+              <MDBox display="flex" alignItems="center" justifyContent="center" gap={1}>
                 <MDTypography
                   component="a"
                   href="#"
@@ -116,19 +127,60 @@ export default function useClientData() {
                 >
                   Consulter
                 </MDTypography>
-              ),
-            };
-          })
-        );
+                <Tooltip title="Archiver le client" arrow>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDeleteClient(client._id)}
+                    sx={{ ml: 3 }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </MDBox>
+            ),
+          };
+        })
+      );
 
-        setClientData((prev) => ({ ...prev, rows: rowsWithAnalyse }));
-      } catch (error) {
-        console.error("Erreur de chargement des clients:", error);
-      }
-    };
-
-    fetchClients();
+      setClientData((prev) => ({ ...prev, rows: rowsWithAnalyse }));
+    } catch (error) {
+      console.error("Erreur de chargement des clients:", error);
+    }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
+
+  const handleDeleteClient = async (clientId) => {
+    if (!window.confirm("Voulez-vous vraiment archiver ce client ?")) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/clients/archiver/${clientId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'archivage");
+      }
+
+      const updatedClient = await response.json();
+      console.log("Client archivé avec succès :", updatedClient);
+
+      // Rafraîchir la table
+      fetchClients();
+    } catch (error) {
+      console.error("Erreur lors de l'archivage du client :", error);
+      alert("Une erreur est survenue lors de l'archivage du client.");
+    }
+  };
 
   // Fonction utilitaire pour évaluer le statut d'analyse
   function getAnalyseStatus(analyse) {

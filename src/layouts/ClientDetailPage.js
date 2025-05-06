@@ -5,7 +5,7 @@ import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDButton from "components/MDButton";
 import defaultImage from "assets/images/team-3.jpg";
-import { Grid } from "@mui/material";
+import { Grid, Card, Typography } from "@mui/material";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -73,67 +73,85 @@ const ClientDetailPage = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox display="flex" flexDirection="column" justifyContent="space-between" minHeight="80vh">
-      <Grid container spacing={2} alignItems="center" mb={1}>
-  <Grid item>
-    <MDAvatar
-      src={client.Logo ? `http://localhost:5000/images/${client.Logo}` : defaultImage}
-      name={client.Nom}
-      size="xl"
-    />
-  </Grid>
-  <Grid item>
-    <MDTypography variant="h4" fontWeight="medium">
-      {client.Nom}
-    </MDTypography>
-  </Grid>
-</Grid>
+      <MDBox display="flex" flexDirection="column" justifyContent="space-between" minHeight="65vh">
+
+        {/* --- Badge Card en-tête pleine largeur --- */}
+        <Card
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            p: 2,
+            position: 'sticky',
+            top: 0,
+            zIndex: 1000,
+            mb: 3, // espace sous la card
+          }}
+        >
+          <MDAvatar
+            src={client.Logo ? `http://localhost:5000/images/${client.Logo}` : defaultImage}
+            name={client.Nom}
+            size="xl"
+          />
+          <Typography variant="h6" sx={{ ml: 2 }}>
+            {client.Nom}
+          </Typography>
+        </Card>
+
+        {/* Grid container pour les stats */}
+        <Grid container spacing={2} alignItems="center" mb={0}>
+          <Grid item>
+            <MDTypography variant="h4" fontWeight="medium">
+              {client.Nom}
+            </MDTypography>
+          </Grid>
+        </Grid>
 
         {/* Statistiques risques */}
-        <MDBox py={0}>
-        <Grid container spacing={3} justifyContent="flex-start">
-    <Grid item xs={12} sm={6} md={2.4}>
-      <ComplexStatisticsCard
-        color="error" // Rouge foncé pour extrême
-        icon="warning"
-        title="Risques extrêmes"
-        count={risquesData.extreme || 0}
-      />
-    </Grid>
-    <Grid item xs={12} sm={6} md={2.4}>
-      <ComplexStatisticsCard
-        color="warning" // Orange pour fort
-        icon="priority_high"
-        title="Risques forts"
-        count={risquesData.fort || 0}
-      />
-    </Grid>
-    <Grid item xs={12} sm={6} md={2.4}>
-      <ComplexStatisticsCard
-        color="info" // Bleu pour moyen
-        icon="signal_cellular_4_bar"
-        title="Risques moyens"
-        count={risquesData.moyen || 0}
-      />
-    </Grid>
-    <Grid item xs={12} sm={6} md={2.4}>
-      <ComplexStatisticsCard
-        color="success" // Vert pour faible
-        icon="check_circle"
-        title="Risques faibles"
-        count={risquesData.faible || 0}
-      />
-    </Grid>
-    <Grid item xs={12} sm={6} md={2.4}>
-      <ComplexStatisticsCard
-        color="secondary" // Gris pour accepté
-        icon="check_circle_outline"
-        title="Risques acceptés"
-        count={risquesData.accepte || 0}
-      />
-    </Grid>
+        <MDBox py={3} px={2} mt={1} mb={2} lineHeight={1}>
+          <Grid container spacing={3} justifyContent="flex-start">
+            <Grid item xs={12} sm={6} md={2.4}>
+              <ComplexStatisticsCard
+                color="error" // Rouge foncé pour extrême
+                icon="warning"
+                title="Risques extrêmes"
+                count={risquesData.extreme || 0}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <ComplexStatisticsCard
+                color="warning" // Orange pour fort
+                icon="priority_high"
+                title="Risques forts"
+                count={risquesData.fort || 0}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <ComplexStatisticsCard
+                color="info" // Bleu pour moyen
+                icon="signal_cellular_4_bar"
+                title="Risques moyens"
+                count={risquesData.moyen || 0}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <ComplexStatisticsCard
+                color="success" // Vert pour faible
+                icon="check_circle"
+                title="Risques faibles"
+                count={risquesData.faible || 0}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <ComplexStatisticsCard
+                color="secondary" // Gris pour accepté
+                icon="check_circle_outline"
+                title="Risques acceptés"
+                count={risquesData.accepte || 0}
+              />
+            </Grid>
+          </Grid>
 
-  </Grid>
           {/* Boutons d'action */}
           <MDBox mt={4}>
             <Grid container spacing={2}>
@@ -143,17 +161,17 @@ const ClientDetailPage = () => {
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <MDButton variant="gradient" color="info" fullWidth onClick={handleGestionRisqueClick}>
+                <MDButton variant="gradient" color="dark" fullWidth onClick={handleGestionRisqueClick}>
                   Gérer risque
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <MDButton variant="gradient" color="success" fullWidth>
+                <MDButton variant="gradient" color="dark" fullWidth>
                   Gestion des sites
                 </MDButton>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <MDButton variant="gradient" color="primary" fullWidth>
+                <MDButton variant="gradient" color="dark" fullWidth>
                   Générer plan d&apos;action via IA
                 </MDButton>
               </Grid>
@@ -168,7 +186,7 @@ const ClientDetailPage = () => {
             <RiskMatrixTable risques={risques} agences={agences} />
           </MDBox>
         </MDBox>
-        <Footer />
+    
       </MDBox>
     </DashboardLayout>
   );

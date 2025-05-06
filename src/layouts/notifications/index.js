@@ -8,8 +8,6 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAlert from "components/MDAlert";
-import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -17,30 +15,28 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 function Notifications() {
-  const [clients, setClients] = useState([]); // État pour stocker les clients récupérés
-  const [successSB, setSuccessSB] = useState(false);
-  const [infoSB, setInfoSB] = useState(false);
-  const [warningSB, setWarningSB] = useState(false);
-  const [errorSB, setErrorSB] = useState(false);
-
-  const openSuccessSB = () => setSuccessSB(true);
-  const closeSuccessSB = () => setSuccessSB(false);
-  const openInfoSB = () => setInfoSB(true);
-  const closeInfoSB = () => setInfoSB(false);
-  const openWarningSB = () => setWarningSB(true);
-  const closeWarningSB = () => setWarningSB(false);
-  const openErrorSB = () => setErrorSB(true);
-  const closeErrorSB = () => setErrorSB(false);
+  const [clientsNonValides, setClientsNonValides] = useState([]); // Clients avec Statut=false
+  const [clientsEnSuppression, setClientsEnSuppression] = useState([]); // Clients avec etatarchivage=1
 
   useEffect(() => {
-    // Appel de l'API pour récupérer les clients avec un statut `true`
+    // Charger les clients non validés
     fetch("http://localhost:5000/api/clients?statut=false")
       .then((response) => response.json())
       .then((data) => {
-        setClients(data); // On met à jour l'état avec les clients récupérés
+        setClientsNonValides(data);
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des clients :", error);
+        console.error("Erreur lors de la récupération des clients non validés :", error);
+      });
+
+    // Charger les clients en demande de suppression
+    fetch("http://localhost:5000/api/clients?etatarchivage=1")
+      .then((response) => response.json())
+      .then((data) => {
+        setClientsEnSuppression(data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des clients en suppression :", error);
       });
   }, []);
 
@@ -55,9 +51,8 @@ function Notifications() {
                 <MDTypography variant="h5">Clients en attente de confirmation</MDTypography>
               </MDBox>
               <MDBox pt={2} px={2}>
-                {/* Affichage des alertes de chaque client */}
-                {clients.length > 0 ? (
-                  clients.map((client, index) => (
+                {clientsNonValides.length > 0 ? (
+                  clientsNonValides.map((client, index) => (
                     <MDAlert key={index} color="primary" dismissible>
                       <MDTypography variant="body2" color="white">
                         {client.Nom} - {client.Contact} - {client.Mail}
@@ -74,9 +69,34 @@ function Notifications() {
               </MDBox>
             </Card>
           </Grid>
+
+          <Grid item xs={12} lg={8}>
+            <Card>
+              <MDBox p={2}>
+                <MDTypography variant="h5">Demandes archivage client</MDTypography>
+              </MDBox>
+              <MDBox pt={2} px={2}>
+                {clientsEnSuppression.length > 0 ? (
+                  clientsEnSuppression.map((client, index) => (
+                    <MDAlert key={index} color="error" dismissible>
+                      <MDTypography variant="body2" color="white">
+                        {client.Nom} - {client.Contact} - {client.Mail}
+                      </MDTypography>
+                    </MDAlert>
+                  ))
+                ) : (
+                  <MDAlert color="success" dismissible>
+                    <MDTypography variant="body2" color="white">
+                      Aucune demande d&apos;archivage.
+                    </MDTypography> 
+                  </MDAlert>
+                )}
+              </MDBox>
+            </Card>
+          </Grid>
         </Grid>
       </MDBox>
-     
+      <Footer />
     </DashboardLayout>
   );
 }

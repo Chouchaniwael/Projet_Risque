@@ -10,7 +10,8 @@ const clientSchema = new mongoose.Schema({
   etat: { type: String, default: "pending", trim: true },       // "etat" -> approved, pending, etc.
   Description: { type: String, trim: true },                   // "Description"
   Mail: { type: String, trim: true },                          // "Mail"
-  linkedin: { type: String, trim: true },                      // "linkedin"
+  linkedin: { type: String, trim: true },  
+  etatarchivage:{ type: Number, default: 0 }, // "etatarchivage" -> 0: non archivé, 1: archivé           
 }, {
   timestamps: true, // ajoute createdAt et updatedAt automatiquement
 });

@@ -65,6 +65,8 @@ const validationClientRoutes = require("./routes/validationclient");
 const questionnaire1 = require("./routes/questionnaires");
 const archiverClientRoutes = require('./routes/archiverclient');
 app.use('/api/clients', archiverClientRoutes);
+const userRoutes = require("./routes/userlist");
+app.use("/api/users", userRoutes);
 
 app.use("/api/clients", validationClientRoutes);
 app.use("/api", countRoutes);

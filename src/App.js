@@ -47,6 +47,7 @@ import DetailQuestionnaire from "layouts/billing/questionaire_details"
 import ValidationProject from "layouts/validationProject";
 import RiskMatrixTable from "layouts/RiskMatrixTable";
 import { useParams } from "react-router-dom";
+import Users from "layouts/Users";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -194,7 +195,7 @@ export default function App() {
         <Route path="/ClientProfilePage/:id" element={<ClientGestionPage />} />
         <Route path="/DetailQuestionnaire/:titre" element={<DetailQuestionnaire />} />
         <Route path="/GestionRisque/:id/ValidationProject" element={<ValidationProject />} />
-      
+        <Route path="/users" element={<Users />} />
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>

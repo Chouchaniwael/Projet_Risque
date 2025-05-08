@@ -51,11 +51,36 @@ export default function useClientData() {
 
   const fetchClients = useCallback(async () => {
     try {
+      // Récupérer le rôle de l'utilisateur depuis le token
+      const token = localStorage.getItem("token");
+      let userRole = "";
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          userRole = payload.role; // Supposons que le rôle est stocké dans le payload du token
+        } catch (error) {
+          console.error("Erreur lors de la lecture du token :", error);
+        }
+      }
+
       const response = await fetch(`http://localhost:5000/api/clients?statut=true`);
-      const clients = await response.json();
+      const json = await response.json();
+
+      console.log("Réponse brute API :", json);
+
+      const clients = Array.isArray(json) ? json : json.data; // à ajuster selon la structure
+      console.log("Clients récupérés :", clients);
+
+      // Filtrer les clients en fonction du rôle de l'utilisateur
+      const filteredClients = userRole === "consultant"
+        ? clients.filter((client) => Number(client.etatarchivage) === 0)
+        : clients;
+
+      console.log("Clients filtrés :", filteredClients);
 
       const rowsWithAnalyse = await Promise.all(
-        clients.map(async (client) => {
+        filteredClients.map(async (client) => {
           let statutAnalyse = "Nouveau";
 
           try {
@@ -63,6 +88,8 @@ export default function useClientData() {
               `http://localhost:5000/api/questionnaire_projet?projet=${client.Nom}`
             );
             const data = await resQ.json();
+
+            console.log(`Analyse pour ${client.Nom}:`, data);
 
             if (Array.isArray(data) && data.length > 0) {
               statutAnalyse = getAnalyseStatus(data[0].analyse);
@@ -84,7 +111,6 @@ export default function useClientData() {
               />
             ),
             function: <Job title={client.Secteur} description={client.Adresse} />,
-
             status: (
               <MDBadge
                 badgeContent={client.Statut ? "Actif" : "Inactif"}
@@ -93,7 +119,6 @@ export default function useClientData() {
                 size="sm"
               />
             ),
-
             analyseStatus: (
               <MDBox display="flex" alignItems="center">
                 {statutAnalyse === "Nouveau" && (
@@ -143,12 +168,15 @@ export default function useClientData() {
         })
       );
 
+      console.log("Rows à insérer dans la table :", rowsWithAnalyse);
+
       setClientData((prev) => ({ ...prev, rows: rowsWithAnalyse }));
     } catch (error) {
       console.error("Erreur de chargement des clients:", error);
     }
   }, [navigate]);
-
+  
+  
   useEffect(() => {
     fetchClients();
   }, [fetchClients]);

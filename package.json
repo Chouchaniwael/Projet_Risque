@@ -54,6 +54,7 @@
     "socket.io-client": "^4.8.1",
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "2.1.1",
+    "sweetalert2": "^11.21.0",
     "workbox-build": "^7.3.0",
     "xlsx": "^0.18.5",
     "yup": "1.1.1"

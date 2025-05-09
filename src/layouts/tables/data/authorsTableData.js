@@ -12,7 +12,8 @@ import ContrastIcon from "@mui/icons-material/Contrast";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-
+import Swal from 'sweetalert2';
+import ArchiveIcon from '@mui/icons-material/Archive';
 export default function useClientData() {
   const navigate = useNavigate();
 
@@ -43,7 +44,7 @@ export default function useClientData() {
       { Header: "Secteur", accessor: "function", align: "left" },
       { Header: "Status", accessor: "status", align: "center" },
       { Header: "Analyse", accessor: "analyseStatus", align: "center" },
-      { Header: "Date", accessor: "employed", align: "center" },
+      { Header: "Date de création", accessor: "employed", align: "center" },
       { Header: "Action", accessor: "action", align: "center" },
     ],
     rows: [],
@@ -153,15 +154,15 @@ export default function useClientData() {
                   Consulter
                 </MDTypography>
                 <Tooltip title="Archiver le client" arrow>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => handleDeleteClient(client._id)}
-                    sx={{ ml: 3 }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+  <IconButton
+    size="small"
+    color="gray"
+    onClick={() => handleDeleteClient(client._id)}
+    sx={{ ml: 3 }}
+  >
+    <ArchiveIcon fontSize="small" />
+  </IconButton>
+</Tooltip>
               </MDBox>
             ),
           };
@@ -181,9 +182,21 @@ export default function useClientData() {
     fetchClients();
   }, [fetchClients]);
 
-  const handleDeleteClient = async (clientId) => {
-    if (!window.confirm("Voulez-vous vraiment archiver ce client ?")) return;
 
+  const handleDeleteClient = async (clientId) => {
+    const result = await Swal.fire({
+      title: 'Êtes-vous sûr ?',
+      text: "Confirmez-vous la demande d'archivage ? Cette action est définitive et ne peut pas être annulée.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, archiver',
+      cancelButtonText: 'Annuler'
+    });
+  
+    if (!result.isConfirmed) return;
+  
     try {
       const response = await fetch(
         `http://localhost:5000/api/clients/archiver/${clientId}`,

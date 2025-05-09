@@ -1,19 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// react-routers components
+// react-router components
 import { Link } from "react-router-dom";
 
 // prop-types is library for typechecking of props
@@ -39,12 +24,11 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
   const { socialMediaColors } = colors;
   const { size } = typography;
 
-  // Convert this form `objectKey` of the object key in to this `object key`
+  // Convert keys like `objectKey` to `object key`
   Object.keys(info).forEach((el) => {
     if (el.match(/[A-Z\s]+/)) {
       const uppercaseLetter = Array.from(el).find((i) => i.match(/[A-Z]+/));
       const newElement = el.replace(uppercaseLetter, ` ${uppercaseLetter.toLowerCase()}`);
-
       labels.push(newElement);
     } else {
       labels.push(el);
@@ -90,11 +74,13 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
         <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}
         </MDTypography>
-        <MDTypography component={Link} to={action.route} variant="body2" color="secondary">
-          <Tooltip title={action.tooltip} placement="top">
-            <Icon>edit</Icon>
-          </Tooltip>
-        </MDTypography>
+        {action && action.route && (
+          <MDTypography component={Link} to={action.route} variant="body2" color="secondary">
+            <Tooltip title={action.tooltip} placement="top">
+              <Icon>edit</Icon>
+            </Tooltip>
+          </MDTypography>
+        )}
       </MDBox>
       <MDBox p={2}>
         <MDBox mb={2} lineHeight={1}>
@@ -119,21 +105,22 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
   );
 }
 
-// Setting default props for the ProfileInfoCard
+// ✅ Default props
 ProfileInfoCard.defaultProps = {
+  action: null,
   shadow: true,
 };
 
-// Typechecking props for the ProfileInfoCard
+// ✅ PropTypes
 ProfileInfoCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   info: PropTypes.objectOf(PropTypes.string).isRequired,
   social: PropTypes.arrayOf(PropTypes.object).isRequired,
   action: PropTypes.shape({
-    route: PropTypes.string.isRequired,
-    tooltip: PropTypes.string.isRequired,
-  }).isRequired,
+    route: PropTypes.string,
+    tooltip: PropTypes.string,
+  }),
   shadow: PropTypes.bool,
 };
 

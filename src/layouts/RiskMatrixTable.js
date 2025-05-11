@@ -38,6 +38,7 @@ export default function RiskMatrixTable() {
       .then(data => {
         if (data.length > 0) {
           setQuestionnaires(data);
+          console.log("Données des questionnaires:", data);
         }
       })
       .catch(err => console.error("Erreur de chargement des risques:", err));

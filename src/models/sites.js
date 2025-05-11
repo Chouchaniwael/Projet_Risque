@@ -1,5 +1,7 @@
-import mongoose from "mongoose";
 
+// src/models/sites.js
+
+const mongoose = require('mongoose');
 const SiteSchema = new mongoose.Schema({
   adresse: {
     type: String,
@@ -24,11 +26,11 @@ const SiteSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  Staut: {
+  Statut: {
     type: String, // Ici, "Staut" est une chaîne et non un booléen
     default: "true", // Valeur par défaut en tant que chaîne
   },
 });
 
 // Le troisième argument "sites" garantit que la collection utilisée sera "sites"
-export default mongoose.model("Site", SiteSchema);
+module.exports = mongoose.model('Site', SiteSchema);

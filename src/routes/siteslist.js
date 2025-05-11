@@ -1,30 +1,18 @@
+// src/routes/siteslist.js
 const express = require('express');
 const router = express.Router();
-const Site = require('../models/sites'); // Assure-toi que le chemin est correct
+const Site = require('../models/sites');
 
-// Route GET pour récupérer les sites avec filtres facultatifs
-router.get('/', async (req, res) => {
+// Route pour récupérer les sites d’un client spécifique via un paramètre d’URL
+router.get('/:clientNom', async (req, res) => {
   try {
-    const { clientNom, statut } = req.query;
-    let filter = {}; // Initialisation de l'objet filtre
-
-    // Filtre sur le statut
-    if (statut !== undefined) {
-      filter.Statut = statut === 'true'; // 'true' => true, 'false' => false
-    }
-
-    // Filtre sur le clientNom
-    if (clientNom) {
-      filter.ClientNom = { $regex: clientNom, $options: 'i' }; // Recherche insensible à la casse
-    }
-
-    console.log("🔍 Filtre utilisé pour sites :", filter);
-
-    const sites = await Site.find(filter); // Chercher les sites avec le filtre
+    const clientNom = req.params.clientNom;
+    const sites = await Site.find({ ClientNom: clientNom });
+    
     res.json(sites);
   } catch (err) {
-    console.error("❌ Erreur serveur lors de la récupération des sites :", err);
-    res.status(500).json({ message: err.message });
+    console.error("❌ Erreur serveur :", err);
+    res.status(500).json({ message: 'Erreur interne du serveur.' });
   }
 });
 

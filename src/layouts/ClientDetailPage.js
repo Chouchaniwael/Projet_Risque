@@ -39,20 +39,57 @@ const ClientDetailPage = () => {
     fetchClient();
   }, [id]);
 
-  useEffect(() => {
-    const fetchRisques = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/questionnaires/risques-par-projet/${id}`);
-        const data = await response.json();
-        setRisquesData(data.compteRisques || {});
-        setRisques(data.risques || []);
-        setAgences(data.agences || []);
-      } catch (error) {
-        console.error("Erreur de chargement des risques:", error);
-      }
-    };
-    fetchRisques();
-  }, [id]);
+ useEffect(() => {
+  const fetchRisques = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/questionnaire_projet?projet=${id}`);
+      const data = await response.json();
+      console.log(data);
+
+      // Comptabiliser les risques par type
+      const compteRisques = {
+        faible: 0,
+        moyen: 0,
+        fort: 0,
+        accepte: 0,
+        inconnu: 0,
+      };
+
+      // Comptabiliser chaque risque en fonction de son type
+      data.forEach((questionnaire) => {
+        const risque = questionnaire.analyse.risqueNet; // Adaptez à la structure de vos données
+        console.log("Risque:", risque); // Debugging  
+        if (risque) {
+          switch (risque) {
+            case 'Faible':
+              compteRisques.faible += 1;
+              break;
+            case 'Moyen':
+              compteRisques.moyen += 1;
+              break;
+            case 'Fort':
+              compteRisques.fort += 1;
+              break;
+            case 'Accepté':
+              compteRisques.accepte += 1;
+              break;
+            default:
+              compteRisques.inconnu += 1;
+              break;
+          }
+        }
+      });
+
+      setRisquesData(compteRisques);
+      setRisques(data.risques || []);
+      setAgences(data.agences || []);
+    } catch (error) {
+      console.error("Erreur de chargement des risques:", error);
+    }
+  };
+  fetchRisques();
+}, [id]);
+
 
   const handleClientInfoClick = () => {
     navigate(`/ClientProfilePage/${id}`);

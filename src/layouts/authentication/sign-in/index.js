@@ -23,6 +23,7 @@ function Basic() {
   const [identifiants, setIdentifiants] = useState([]);
   const navigate = useNavigate();
 
+  // Fetching the available identifiants from the server
   useEffect(() => {
     const fetchIdentifiants = async () => {
       try {
@@ -64,7 +65,12 @@ function Basic() {
         // ✅ Sauvegarder le token dans le localStorage
         localStorage.setItem("token", data.token);
 
-        navigate("/dashboard");
+        // Vérification du rôle et redirection
+        if (data.user.role === "admin") {
+          navigate("/users"); // Redirection vers la page des utilisateurs si c'est un admin
+        } else {
+          navigate("/dashboard"); // Sinon, redirection vers le tableau de bord
+        }
       } else {
         console.log("Erreur :", data.message);
         setError(data.message || "Une erreur s'est produite. Essayez à nouveau.");

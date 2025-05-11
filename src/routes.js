@@ -14,7 +14,7 @@ import CentreValidation from "layouts/authentication/CentreValidation";
 import ForgotPassword from "nejdWork/forgot_password";
 import ResetPassword from "nejdWork/reset_password";
 import Logout from "layouts/Logout";
-
+import Users from "layouts/Users";
 // @mui icons
 import Icon from "@mui/material/Icon";
 
@@ -33,7 +33,7 @@ const routes = [
     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
-    show: true,
+    show: getUserRole() !== "admin",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
@@ -42,7 +42,7 @@ const routes = [
     type: "collapse",
     name: "Clients",
     key: "Clients",
-    show: true,
+    show: getUserRole() !== "admin",
     icon: <Icon fontSize="small">groups</Icon>,
     route: "/Clients",
     component: <Tables />,
@@ -51,7 +51,7 @@ const routes = [
     type: "collapse",
     name: "Scénario de risque",
     key: "Risque",
-    show: true,
+    show: getUserRole() !== "admin",
     icon: <Icon fontSize="small">report_problem</Icon>,
     route: "/Risque",
     component: <Billing />,
@@ -60,7 +60,7 @@ const routes = [
     type: "collapse",
     name: "Notifications",
     key: "notifications",
-    show: true,
+    show: getUserRole() !== "admin",
     icon: <Icon fontSize="small">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
@@ -69,7 +69,7 @@ const routes = [
     type: "collapse",
     name: "Profile",
     key: "profile",
-    show: true,
+    show: getUserRole() !== "admin",
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
@@ -107,11 +107,21 @@ const routes = [
     route: "/authentication/reset-password/:token",
     component: <ResetPassword />,
   },
-  {
+ 
+   {
+    type: "collapse",
+    name: "Utilisateurs",
+    key: "users",
+    show: "true",
+    icon: <Icon fontSize="small">people</Icon>,
+    route: "/users",
+    component: <Users />,
+  },
+   {
     type: "collapse",
     name: "Déconnexion",
     key: "rtl",
-    show: true,
+    show: "true",
     icon: <Icon fontSize="small">logout</Icon>,
     route: "/Déconnexion",
     component: <Logout />,

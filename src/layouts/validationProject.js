@@ -121,6 +121,13 @@ const ValidationProject = () => {
     }));
   };
 
+  const handleCommentChange = (questionId, value) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [`${questionId}-comment`]: value,
+    }));
+  };
+
   const handleRiskChange = (questionId, field, value) => {
     setRiskData((prev) => {
       const updatedRisk = {
@@ -393,8 +400,8 @@ const ValidationProject = () => {
                               <MDBox
                                 key={questionId}
                                 display="flex"
-                                alignItems="center"
-                                justifyContent="space-between"
+                                flexDirection="column"
+                                alignItems="flex-start"
                                 mb={2}
                                 p={2}
                                 sx={{
@@ -403,12 +410,11 @@ const ValidationProject = () => {
                                   boxShadow: `0 2px 8px ${theme.palette.grey[200]}`,
                                   transition: "all 0.2s ease",
                                   "&:hover": {
-                                   
                                     transform: "translateY(-2px)",
                                   },
                                 }}
                               >
-                                <Typography variant="body1" sx={{ flex: 1, mr: 2 }}>
+                                <Typography variant="body1" sx={{ flex: 1, mb: 1 }}>
                                   {question.texte}
                                 </Typography>
                                 <FormControl size="small" sx={{ minWidth: 200 }}>
@@ -442,25 +448,40 @@ const ValidationProject = () => {
                                       </ListItemIcon>
                                       <ListItemText primary="N/A" />
                                     </MenuItem>
+                                    <MenuItem value="Commentaires">
+                                      <ListItemIcon>
+                                        <HelpIcon sx={{ color: theme.palette.grey[500] }} />
+                                      </ListItemIcon>
+                                      <ListItemText primary="Commentaires" />
+                                    </MenuItem>
                                   </Select>
                                 </FormControl>
+                                {answers[questionId] === "Commentaires" && (
+                                  <TextField
+                                    fullWidth
+                                    label="Commentaires"
+                                    multiline
+                                    minRows={3}
+                                    value={answers[`${questionId}-comment`] || ""}
+                                    onChange={(e) => handleCommentChange(questionId, e.target.value)}
+                                    variant="outlined"
+                                    sx={{ mt: 2, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                                  />
+                                )}
                               </MDBox>
                             );
                           })}
                         </AccordionDetails>
                       </Accordion>
                     ))}
-
-<Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 500 }}>
-                      Risques bruts
-                    </Typography>
-                    <Grid container spacing={2} mt={1}>
-                      <Grid item xs={12} sm={6}>
+                    <Grid container spacing={2} mt={3}>
+                      <Grid item xs={12}>
+                        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 500 }}>
+                          Analyse de Risque
+                        </Typography>
                         <TextField
                           fullWidth
                           label="Constat"
-                          multiline
-                          minRows={4}
                           value={riskData[qIdx]?.constat || ""}
                           onChange={(e) => handleRiskChange(qIdx, "constat", e.target.value)}
                           variant="outlined"

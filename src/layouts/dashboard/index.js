@@ -1,43 +1,50 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Card, CardContent,
-  Typography, Button, TextField, IconButton, Checkbox, List, ListItem, ListItemText
+  Grid,
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  IconButton,
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Bar } from "react-chartjs-2";
+
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+import PeopleIcon from "@mui/icons-material/People";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement } from "chart.js";
+import AddIcon from "@mui/icons-material/Add";
 import MDBox from "components/MDBox";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-
+import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-import MDButton from "components/MDButton";
 
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import { sales, chartTasks } from "layouts/dashboard/data/reportsLineChartData";
-
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-
-import Chat from "./Chat"; // Import the Chat component
-
-ChartJS.register(ArcElement, Tooltip, Legend, Title);
+ChartJS.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement);
 
 function Dashboard() {
   const [clientCount, setClientCount] = useState(0);
   const [clients, setClients] = useState([]);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const statut = true;
-
-  const [taskText, setTaskText] = useState("");
-  const [tasks, setTasks] = useState([]);
+  const [kanbanTasks, setKanbanTasks] = useState({
+    idea: [{ id: "1", content: "Task 1" }, { id: "2", content: "Task 2" }],
+    started: [{ id: "3", content: "Task 3" }],
+    finished: [{ id: "4", content: "Task 4" }],
+  });
+  const [newTask, setNewTask] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/api/clients/countclient")
@@ -52,11 +59,11 @@ function Dashboard() {
   }, [statut]);
 
   const pieData = {
-    labels: ['Active', 'Inactive', 'Pending'],
+    labels: ["Active", "Inactive", "Pending"],
     datasets: [{
-      label: 'Client Status',
+      label: "Client Status",
       data: [400, 300, 300],
-      backgroundColor: ['#0088FE', '#00C49F', '#FFBB28'],
+      backgroundColor: ["#0088FE", "#00C49F", "#FFBB28"],
       hoverOffset: 4,
     }],
   };
@@ -64,61 +71,49 @@ function Dashboard() {
   const pieOptions = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' },
+      legend: { position: "top" },
       tooltip: {
         callbacks: {
           label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}`,
         },
       },
     },
-    animation: {
-      animateRotate: true,
-      animateScale: true,
+    animation: { animateRotate: true, animateScale: true },
+  };
+
+  // Bar Chart data and options
+  const barData = {
+    labels: ["Santé", "Finance", "Éducation", "Industrie", "Technologie"],
+    datasets: [
+      {
+        label: "Nombre de clients",
+        data: [12, 19, 8, 15, 10], // Example values, replace with actual data if needed
+        backgroundColor: "#42a5f5",
+      },
+    ],
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Répartition des clients par secteur",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
     },
   };
 
-  const handleAddTask = () => {
-    if (taskText.trim()) {
-      setTasks([...tasks, { text: taskText, completed: false }]);
-      setTaskText("");
-    }
-  };
-
-  const handleToggleTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks[index].completed = !newTasks[index].completed;
-    setTasks(newTasks);
-  };
-
-  const handleDeleteTask = (index) => {
-    const newTasks = tasks.filter((_, i) => i !== index);
-    setTasks(newTasks);
-  };
-
-  const handleClientDetails = (clientId) => {
-    // Détails client
-  };
-
-  const [kanbanTasks, setKanbanTasks] = useState({
-    idea: [
-      { id: "1", content: "Task 1" },
-      { id: "2", content: "Task 2" },
-    ],
-    started: [
-      { id: "3", content: "Task 3" },
-    ],
-    finished: [
-      { id: "4", content: "Task 4" },
-    ],
-  });
-
-  const [newTask, setNewTask] = useState("");
-
   const handleAddKanbanTask = () => {
     if (newTask.trim()) {
-      setKanbanTasks((prevTasks) => ({
-        ...prevTasks,
-        idea: [...prevTasks.idea, { id: Date.now().toString(), content: newTask }],
+      setKanbanTasks((prev) => ({
+        ...prev,
+        idea: [...prev.idea, { id: Date.now().toString(), content: newTask }],
       }));
       setNewTask("");
     }
@@ -126,238 +121,247 @@ function Dashboard() {
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
-
     if (!destination) return;
 
-    const sourceColumn = kanbanTasks[source.droppableId];
-    const destColumn = kanbanTasks[destination.droppableId];
-    const [removed] = sourceColumn.splice(source.index, 1);
-    destColumn.splice(destination.index, 0, removed);
+    const sourceColumn = [...kanbanTasks[source.droppableId]];
+    const destColumn = [...kanbanTasks[destination.droppableId]];
+    const [moved] = sourceColumn.splice(source.index, 1);
+    destColumn.splice(destination.index, 0, moved);
 
-    setKanbanTasks({
-      ...kanbanTasks,
+    setKanbanTasks((prev) => ({
+      ...prev,
       [source.droppableId]: sourceColumn,
       [destination.droppableId]: destColumn,
-    });
+    }));
   };
 
   const onDeleteTask = (columnId, taskId) => {
-    setKanbanTasks((prevTasks) => {
-      const updatedColumn = prevTasks[columnId].filter((task) => task.id !== taskId);
-      return {
-        ...prevTasks,
-        [columnId]: updatedColumn,
-      };
-    });
+    setKanbanTasks((prev) => ({
+      ...prev,
+      [columnId]: prev[columnId].filter((task) => task.id !== taskId),
+    }));
+  };
+
+  const handleClientDetails = (clientId) => {
+    console.log("Client ID:", clientId);
   };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        {/* Cartes */}
-        <Grid container spacing={3}>
-          {[...Array(4)].map((_, i) => (
-            <Grid item xs={12} md={6} lg={3} key={i}>
-              <MDBox mb={1.5}>
-                <ComplexStatisticsCard
-                  color="dark"
-                  icon="weekend"
-                  title="Bookings"
-                  count={281}
-                  percentage={{ color: "success", amount: "+55%", label: "than last week" }}
-                />
-              </MDBox>
-            </Grid>
-          ))}
+        {/* Statistiques */}
+        <Grid container spacing={3} alignItems="center">
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard
+              color="error"
+              icon="people"
+              title="Nombre de clients gérés"
+            />
+          </Grid>
+          <Grid item xs={12} sm={2.4} md={4}>
+            <ComplexStatisticsCard
+              color="warning"
+              icon="priority_high"
+              title="Risques extreme"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard
+              color="info"
+              icon="signal_cellular_4_bar"
+              title="Risques fort"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard
+              color="success"
+              icon="check_circle"
+              title="Risques moyen"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard
+              color="secondary"
+              icon="check_circle_outline"
+              title="Risques faible"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard
+              color="secondary"
+              icon="check_circle_outline"
+              title="Risques accepté"
+            />
+          </Grid>
         </Grid>
 
-        {/* Graphiques */}
+        {/* Graphiques, calendrier, chat */}
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description="(+15%) increase in today's sales"
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={chartTasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
-
-        {/* Section Calendrier, Pie Chart, Google Chat */}
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <Calendar onChange={setCalendarDate} value={calendarDate} className="react-calendar custom-calendar" />
-            </Grid>
+            
             <Grid item xs={12} md={6} lg={4}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5">Statut des Clients</Typography>
+                  <Typography variant="h6" mb={2}>Statut des Clients</Typography>
                   <Pie data={pieData} options={pieOptions} />
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDButton variant="contained" color="primary" onClick={() => window.open("https://chat.google.com", "_blank")}>
-                Accéder à Google Chat
-              </MDButton>
-            </Grid>
-          </Grid>
-        </MDBox>
-
-        {/* To-do List */}
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={6}>
+         <Grid item xs={12} md={6} lg={4}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5">To-Do List</Typography>
-                  <MDBox display="flex" mt={2}>
-                    <TextField
-                      label="Nouvelle tâche"
-                      fullWidth
-                      value={taskText}
-                      onChange={(e) => setTaskText(e.target.value)}
-                    />
-                    <MDButton color="success" onClick={handleAddTask} sx={{ ml: 2 }}>
-                      Ajouter
-                    </MDButton>
-                  </MDBox>
-                  <List>
-                    {tasks.map((task, index) => (
-                      <ListItem
-                        key={index}
-                        secondaryAction={
-                          <IconButton edge="end" onClick={() => handleDeleteTask(index)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        }
-                      >
-                        <Checkbox
-                          checked={task.completed}
-                          onChange={() => handleToggleTask(index)}
-                        />
-                        <ListItemText
-                          primary={task.text}
-                          style={{ textDecoration: task.completed ? "line-through" : "none" }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
+                  <Typography variant="h6" mb={2}>Répartition des clients par secteur</Typography>
+                  <Bar data={barData} options={barOptions} />
                 </CardContent>
               </Card>
             </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <Calendar onChange={setCalendarDate} value={calendarDate} className="react-calendar custom-calendar" />
+            </Grid>
           </Grid>
         </MDBox>
 
-        {/* Kanban Board */}
+        {/* BarChart - Clients par secteur */}
+        <MDBox mt={4.5}>
+          <Grid container spacing={3}>
+            
+          </Grid>
+        </MDBox>
+           <Grid item xs={12} md={6} lg={4}>
+              <MDButton
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => window.open("https://chat.google.com", "_blank")}
+              >
+                Accéder à Google Chat
+              </MDButton>
+            </Grid>
+
+        {/* Kanban */}
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <TextField
-                label="Nouvelle tâche"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                fullWidth
-                variant="outlined"
-                style={{ marginBottom: "10px" }}
-              />
-              <Button variant="contained" color="primary" onClick={handleAddKanbanTask}>
-                Ajouter Tâche
-              </Button>
-            </Grid>
-            <Grid item xs={12}>
               <DragDropContext onDragEnd={onDragEnd}>
-                <Grid container spacing={3}>
-                  {Object.entries(kanbanTasks).map(([columnId, columnTasks]) => (
-                    <Grid item xs={12} md={4} key={columnId}>
-                      <Paper elevation={3}>
-                        <Typography variant="h6" align="center" style={{ padding: "10px" }}>
-                          {columnId.charAt(0).toUpperCase() + columnId.slice(1)}
-                        </Typography>
-                        <Droppable droppableId={columnId}>
-                          {(provided) => (
-                            <div
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                              style={{ minHeight: "200px", padding: "10px" }}
-                            >
-                              {columnTasks.map((task, index) => (
-                                <Draggable key={task.id} draggableId={task.id} index={index}>
-                                  {(provided) => (
-                                    <Card
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      style={{
-                                        marginBottom: "10px",
-                                        ...provided.draggableProps.style,
-                                      }}
-                                    >
-                                      <CardContent style={{ display: "flex", justifyContent: "space-between" }}>
-                                        <Typography>{task.content}</Typography>
-                                        <IconButton
-                                          color="error"
-                                          onClick={() => onDeleteTask(columnId, task.id)}
-                                        >
-                                          <DeleteIcon />
-                                        </IconButton>
-                                      </CardContent>
-                                    </Card>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {provided.placeholder}
-                            </div>
+                <Grid container spacing={2}>
+                  {Object.entries(kanbanTasks).map(([columnId, columnTasks]) => {
+                    const columnTitles = {
+                      idea: { title: "Idées", color: "#1976d2" },
+                      started: { title: "En cours", color: "#f9a825" },
+                      finished: { title: "Terminées", color: "#2e7d32" },
+                    };
+                    const { title, color } = columnTitles[columnId] || { title: columnId, color: "#ccc" };
+
+                    return (
+                      <Grid item xs={12} md={4} key={columnId}>
+                        <Paper
+                          elevation={4}
+                          sx={{
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
+                            p: 2,
+                            minHeight: 400,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            align="center"
+                            gutterBottom
+                            sx={{
+                              backgroundColor: color,
+                              color: "#fff",
+                              borderRadius: 1,
+                              py: 1,
+                              mb: 2,
+                            }}
+                          >
+                            {title} ({columnTasks.length})
+                          </Typography>
+
+                          {/* Ajouter la tâche ici uniquement dans la colonne "idea" */}
+                          {columnId === "idea" && (
+                            <MDBox mb={2}>
+                              <TextField
+                                label="Nouvelle tâche"
+                                value={newTask}
+                                onChange={(e) => setNewTask(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                sx={{ mb: 1 }}
+                              />
+                              <Button
+                                variant="contained"
+                                color="white"
+                                onClick={handleAddKanbanTask}
+                                startIcon={<AddIcon />}
+                                fullWidth
+                              >
+                                Ajouter Tâche
+                              </Button>
+                            </MDBox>
                           )}
-                        </Droppable>
-                      </Paper>
-                    </Grid>
-                  ))}
+
+                          <Droppable droppableId={columnId}>
+                            {(provided) => (
+                              <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                style={{ flexGrow: 1 }}
+                              >
+                                {columnTasks.map((task, index) => (
+                                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                                    {(provided) => (
+                                      <Card
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        sx={{
+                                          mb: 2,
+                                          boxShadow: 3,
+                                          borderRadius: 2,
+                                          backgroundColor: "#fff",
+                                        }}
+                                      >
+                                        <CardContent
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            p: 2,
+                                          }}
+                                        >
+                                          <Typography sx={{ wordBreak: "break-word", flexGrow: 1 }}>
+                                            {task.content}
+                                          </Typography>
+                                          <IconButton
+                                            color="error"
+                                            onClick={() => onDeleteTask(columnId, task.id)}
+                                          >
+                                            <DeleteIcon />
+                                          </IconButton>
+                                        </CardContent>
+                                      </Card>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </Paper>
+                      </Grid>
+                    );
+                  })}
                 </Grid>
               </DragDropContext>
             </Grid>
           </Grid>
         </MDBox>
 
-        {/* Chat Section */}
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Chat />
-            </Grid>
-          </Grid>
-        </MDBox>
-
-        {/* Liste des Clients */}
+        {/* Liste des clients */}
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -381,9 +385,9 @@ function Dashboard() {
                             <TableCell align="center">{client.Mail}</TableCell>
                             <TableCell align="center">{client.Statut ? "Actif" : "Inactif"}</TableCell>
                             <TableCell align="center">
-                              <Button variant="contained" color="primary" onClick={() => handleClientDetails(client._id)}>
+                              <MDButton variant="contained" onClick={() => handleClientDetails(client._id)}>
                                 Détails
-                              </Button>
+                              </MDButton>
                             </TableCell>
                           </TableRow>
                         ))}

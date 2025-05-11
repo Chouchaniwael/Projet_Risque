@@ -33,21 +33,24 @@ router.post("/login", async (req, res) => {
     );
 
     // 4. Réponse réussie avec le token
-    res.json({
+    const response = {
       success: true,
       user: {
         id: user._id,
         nom: user.nom,
         prenom: user.prenom,
         poste: user.poste,
-        
+        role: user.role,
       },
       token, // Renvoie le token au frontend
-    });
+    };
 
+ return res.json(response);
+
+    return res.json(response);
   } catch (err) {
     console.error("Erreur de connexion:", err);
-    res.status(500).json({ success: false, message: "Erreur serveur" });
+    return res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 });
 

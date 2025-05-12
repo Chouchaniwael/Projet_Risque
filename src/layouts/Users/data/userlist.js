@@ -4,13 +4,52 @@ import { useState, useEffect } from "react";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
-import MDBadge from "components/MDBadge";
-import defaultImage from "assets/images/team-3.jpg";
+import IconButton from "@mui/material/IconButton";
+import Icon from "@mui/material/Icon";
 
-export default function useUserData() {
-  const Author = ({ name, email }) => (
+// Fonction pour afficher l'icône de statut
+const StatusIcon = ({ status }) => {
+  let icon;
+  let color;
+
+  switch (status) {
+    case "en cours de validation":
+      icon = "hourglass_empty"; // Icône "en cours"
+      color = "orange";
+      break;
+    case "archivé":
+      icon = "archive"; // Icône "archivé"
+      color = "grey";
+      break;
+    case "actif":
+    default:
+      icon = "check_circle"; // Icône "actif"
+      color = "green";
+      break;
+  }
+
+  return (
+    <Icon sx={{ fontSize: 20, color: color, marginRight: 1 }}>
+      {icon}
+    </Icon>
+  );
+};
+
+export default function useUserData(onEditClick) {
+  const Author = ({ name, email, status }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={defaultImage} name={name} size="sm" />
+      <MDAvatar
+        sx={{
+          width: 40,
+          height: 40,
+          backgroundColor: "#f0f0f0", // facultatif : couleur de fond
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Icon sx={{ fontSize: 60, color: "#555" }}>person</Icon>
+      </MDAvatar>
       <MDBox ml={2} lineHeight={1}>
         <MDTypography display="block" variant="button" fontWeight="medium">
           {name}
@@ -31,10 +70,12 @@ export default function useUserData() {
 
   const [userData, setUserData] = useState({
     columns: [
-      { Header: "Utilisateur", accessor: "author", width: "25%", align: "left" },
+      { Header: "Utilisateur", accessor: "author", width: "20%", align: "left" },
       { Header: "Rôle", accessor: "function", align: "left" },
+      { Header: "Statut", accessor: "status", align: "center" },  // Nouvelle colonne pour le statut
       { Header: "Email", accessor: "email", align: "center" },
       { Header: "Date de création", accessor: "createdAt", align: "center" },
+      { Header: "Actions", accessor: "actions", align: "center" },
     ],
     rows: [],
   });
@@ -46,8 +87,9 @@ export default function useUserData() {
         const data = await response.json();
 
         const rows = data.map((user) => ({
-          author: <Author name={`${user.prenom} ${user.nom}`} email={user.email} />,
+          author: <Author name={`${user.prenom} ${user.nom}`} email={user.email} status="actif" />, // Statut "actif" par défaut
           function: <Job title={user.role} description={user.identifiant} />,
+          status: <StatusIcon status="actif" />,  // Affichage de l'icône de statut
           email: (
             <MDTypography variant="caption" fontWeight="regular">
               {user.email}
@@ -58,6 +100,15 @@ export default function useUserData() {
               {new Date(user.date_creation).toLocaleDateString()}
             </MDTypography>
           ),
+          actions: (
+            <IconButton
+              color="primary"
+              onClick={() => onEditClick(user)}
+              aria-label="modifier"
+            >
+              <Icon>edit</Icon>
+            </IconButton>
+          ),
         }));
 
         setUserData((prev) => ({ ...prev, rows }));
@@ -67,7 +118,7 @@ export default function useUserData() {
     };
 
     fetchUsers();
-  }, []);
+  }, [onEditClick]);
 
   return userData;
 }

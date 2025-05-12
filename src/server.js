@@ -66,6 +66,9 @@ const questionnaire1 = require("./routes/questionnaires");
 const archiverClientRoutes = require('./routes/archiverclient');
 const questionnaireSiteRoutes = require('./routes/getquestionnaires_sites');
 const userRoutes = require("./routes/userlist");
+const ajoutUserRoute = require("./routes/ajoutuser");
+const userEditRoute = require("./routes/useredit");
+app.use("/api", userEditRoute);
 app.use("/api/users", userRoutes);
 app.use('/api/clients', archiverClientRoutes);
 app.use("/api/clients", validationClientRoutes);
@@ -84,6 +87,7 @@ app.use("/api/getquestionnaire_standard_byTitre", getquestionnaire_standard_byTi
 app.use("/api/ajouter_questionnaire_projet",ajouter_questionnaire_projet);
 app.use('/api/questionnaire_projet', questionnaireProjetRoutes);
 app.use('/api/questionnaire_site', questionnaireSiteRoutes);
+app.use('/api/ajoutuser', ajoutUserRoute);
 // Créer un serveur HTTP
 const server = http.createServer(app);
 

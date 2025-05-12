@@ -112,7 +112,7 @@ const routes = [
     type: "collapse",
     name: "Utilisateurs",
     key: "users",
-    show: "true",
+    show: getUserRole() === "admin",
     icon: <Icon fontSize="small">people</Icon>,
     route: "/users",
     component: <Users />,

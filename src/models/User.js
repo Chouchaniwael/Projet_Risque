@@ -1,5 +1,6 @@
 // models/User.js
 const mongoose = require("mongoose");
+const { boolean } = require("yup");
 
 const UserSchema = new mongoose.Schema({
   identifiant: { type: String, required: true, unique: true },
@@ -9,7 +10,8 @@ const UserSchema = new mongoose.Schema({
   adresse: { type: String },
   mot_de_passe: { type: String, required: true },
   role: { type: String, default: "consultant" },
-  date_creation: { type: Date, default: Date.now }
+  date_creation: { type: Date, default: Date.now },
+  statut : { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("User", UserSchema);

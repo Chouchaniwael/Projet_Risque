@@ -6,34 +6,36 @@ import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import IconButton from "@mui/material/IconButton";
 import Icon from "@mui/material/Icon";
-
+import Tooltip from "@mui/material/Tooltip"; // à ajouter en haut
 // Fonction pour afficher l'icône de statut
 const StatusIcon = ({ status }) => {
   let icon;
   let color;
+  let label;
 
-  switch (status) {
-    case "en cours de validation":
-      icon = "hourglass_empty"; // Icône "en cours"
-      color = "orange";
-      break;
-    case "archivé":
-      icon = "archive"; // Icône "archivé"
-      color = "grey";
-      break;
-    case "actif":
-    default:
-      icon = "check_circle"; // Icône "actif"
-      color = "green";
-      break;
+  if (status === true) {
+    icon = "check_circle";
+    color = "green";
+    label = "Actif";
+  } else if (status === false) {
+    icon = "hourglass_empty";
+    color = "orange";
+    label = "En cours de validation";
+  } else {
+    icon = "help_outline";
+    color = "grey";
+    label = "Statut inconnu";
   }
 
   return (
-    <Icon sx={{ fontSize: 20, color: color, marginRight: 1 }}>
-      {icon}
-    </Icon>
+    <Tooltip title={label}>
+      <Icon sx={{ fontSize: 20, color: color, marginRight: 1 }}>
+        {icon}
+      </Icon>
+    </Tooltip>
   );
 };
+
 
 export default function useUserData(onEditClick) {
   const Author = ({ name, email, status }) => (
@@ -89,7 +91,7 @@ export default function useUserData(onEditClick) {
         const rows = data.map((user) => ({
           author: <Author name={`${user.prenom} ${user.nom}`} email={user.email} status="actif" />, // Statut "actif" par défaut
           function: <Job title={user.role} description={user.identifiant} />,
-          status: <StatusIcon status="actif" />,  // Affichage de l'icône de statut
+         status: <StatusIcon status={user.statut} />,   // Affichage de l'icône de statut
           email: (
             <MDTypography variant="caption" fontWeight="regular">
               {user.email}

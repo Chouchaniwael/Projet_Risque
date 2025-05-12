@@ -13,17 +13,24 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Bar } from "react-chartjs-2";
-
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import PeopleIcon from "@mui/icons-material/People";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
 import AddIcon from "@mui/icons-material/Add";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
@@ -39,33 +46,78 @@ function Dashboard() {
   const [clients, setClients] = useState([]);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const statut = true;
+  const [barChartData, setBarChartData] = useState({ labels: [], datasets: [] });
+
   const [kanbanTasks, setKanbanTasks] = useState({
     idea: [{ id: "1", content: "Task 1" }, { id: "2", content: "Task 2" }],
     started: [{ id: "3", content: "Task 3" }],
     finished: [{ id: "4", content: "Task 4" }],
   });
+
   const [newTask, setNewTask] = useState("");
 
+  const [riskCounts, setRiskCounts] = useState({
+    extreme: 0,
+    fort: 0,
+    moyen: 0,
+    faible: 0,
+    accepte: 0,
+  });
+
   useEffect(() => {
-    fetch("http://localhost:5000/api/clients/countclient")
+    fetch("http://localhost:5000/api/countclient")
       .then((res) => res.json())
-      .then((data) => setClientCount(data.clientCount))
+      .then((data) => {
+        setClientCount(data.clientCount);
+      })
       .catch((err) => console.error("Erreur:", err));
 
     fetch(`http://localhost:5000/api/clients?statut=${statut}`)
       .then((res) => res.json())
-      .then((data) => setClients(data))
+      .then((data) => {
+        setClients(data);
+
+        // 🎯 Comptage des clients par secteur
+        const sectorCount = {};
+        data.forEach((client) => {
+          const secteur = client.Secteur || "Inconnu";
+          sectorCount[secteur] = (sectorCount[secteur] || 0) + 1;
+        });
+
+        const labels = Object.keys(sectorCount);
+        const values = Object.values(sectorCount);
+
+        setBarChartData({
+          labels,
+          datasets: [
+            {
+              label: "Nombre de clients",
+              data: values,
+              backgroundColor: "#42a5f5",
+            },
+          ],
+        });
+      })
       .catch((err) => console.error("Erreur:", err));
+
+    fetch("http://localhost:5000/api/questionnaire_projet/countRisks?projet=exampleProjet")
+      .then((res) => res.json())
+      .then((data) => {
+        setRiskCounts(data);
+      })
+      .catch((err) => console.error("Erreur lors de la récupération des risques:", err));
   }, [statut]);
 
   const pieData = {
     labels: ["Active", "Inactive", "Pending"],
-    datasets: [{
-      label: "Client Status",
-      data: [400, 300, 300],
-      backgroundColor: ["#0088FE", "#00C49F", "#FFBB28"],
-      hoverOffset: 4,
-    }],
+    datasets: [
+      {
+        label: "Client Status",
+        data: [400, 300, 300],
+        backgroundColor: ["#0088FE", "#00C49F", "#FFBB28"],
+        hoverOffset: 4,
+      },
+    ],
   };
 
   const pieOptions = {
@@ -79,18 +131,6 @@ function Dashboard() {
       },
     },
     animation: { animateRotate: true, animateScale: true },
-  };
-
-  // Bar Chart data and options
-  const barData = {
-    labels: ["Santé", "Finance", "Éducation", "Industrie", "Technologie"],
-    datasets: [
-      {
-        label: "Nombre de clients",
-        data: [12, 19, 8, 15, 10], // Example values, replace with actual data if needed
-        backgroundColor: "#42a5f5",
-      },
-    ],
   };
 
   const barOptions = {
@@ -150,56 +190,29 @@ function Dashboard() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        {/* Statistiques */}
         <Grid container spacing={3} alignItems="center">
           <Grid item xs={12} sm={6} md={4}>
-            <ComplexStatisticsCard
-              color="error"
-              icon="people"
-              title="Nombre de clients gérés"
-            />
+            <ComplexStatisticsCard color="error" icon="people" title="Nombre de clients gérés" count={clientCount} />
           </Grid>
           <Grid item xs={12} sm={2.4} md={4}>
-            <ComplexStatisticsCard
-              color="warning"
-              icon="priority_high"
-              title="Risques extreme"
-            />
+            <ComplexStatisticsCard color="warning" icon="priority_high" title="Risques extrêmes" count={riskCounts.extreme} />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-            <ComplexStatisticsCard
-              color="info"
-              icon="signal_cellular_4_bar"
-              title="Risques fort"
-            />
+            <ComplexStatisticsCard color="info" icon="signal_cellular_4_bar" title="Risques forts" count={riskCounts.fort} />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-            <ComplexStatisticsCard
-              color="success"
-              icon="check_circle"
-              title="Risques moyen"
-            />
+            <ComplexStatisticsCard color="success" icon="check_circle" title="Risques moyens" count={riskCounts.moyen} />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-            <ComplexStatisticsCard
-              color="secondary"
-              icon="check_circle_outline"
-              title="Risques faible"
-            />
+            <ComplexStatisticsCard color="secondary" icon="check_circle_outline" title="Risques faibles" count={riskCounts.faible} />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-            <ComplexStatisticsCard
-              color="secondary"
-              icon="check_circle_outline"
-              title="Risques accepté"
-            />
+            <ComplexStatisticsCard color="secondary" icon="check_circle_outline" title="Risques acceptés" count={riskCounts.accepte} />
           </Grid>
         </Grid>
 
-        {/* Graphiques, calendrier, chat */}
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
-            
             <Grid item xs={12} md={6} lg={4}>
               <Card>
                 <CardContent>
@@ -208,11 +221,11 @@ function Dashboard() {
                 </CardContent>
               </Card>
             </Grid>
-         <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={12} md={6} lg={4}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" mb={2}>Répartition des clients par secteur</Typography>
-                  <Bar data={barData} options={barOptions} />
+                  <Bar data={barChartData} options={barOptions} />
                 </CardContent>
               </Card>
             </Grid>
@@ -222,24 +235,12 @@ function Dashboard() {
           </Grid>
         </MDBox>
 
-        {/* BarChart - Clients par secteur */}
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            
-          </Grid>
-        </MDBox>
-           <Grid item xs={12} md={6} lg={4}>
-              <MDButton
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => window.open("https://chat.google.com", "_blank")}
-              >
-                Accéder à Google Chat
-              </MDButton>
-            </Grid>
+        <Grid item xs={12} md={6} lg={4} sx={{ mt: 3 }}>
+          <MDButton variant="contained" color="primary" fullWidth onClick={() => window.open("https://chat.google.com", "_blank")}>
+            Accéder à Google Chat
+          </MDButton>
+        </Grid>
 
-        {/* Kanban */}
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -281,7 +282,6 @@ function Dashboard() {
                             {title} ({columnTasks.length})
                           </Typography>
 
-                          {/* Ajouter la tâche ici uniquement dans la colonne "idea" */}
                           {columnId === "idea" && (
                             <MDBox mb={2}>
                               <TextField
@@ -306,11 +306,7 @@ function Dashboard() {
 
                           <Droppable droppableId={columnId}>
                             {(provided) => (
-                              <div
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                                style={{ flexGrow: 1 }}
-                              >
+                              <div {...provided.droppableProps} ref={provided.innerRef} style={{ flexGrow: 1 }}>
                                 {columnTasks.map((task, index) => (
                                   <Draggable key={task.id} draggableId={task.id} index={index}>
                                     {(provided) => (
@@ -336,10 +332,7 @@ function Dashboard() {
                                           <Typography sx={{ wordBreak: "break-word", flexGrow: 1 }}>
                                             {task.content}
                                           </Typography>
-                                          <IconButton
-                                            color="error"
-                                            onClick={() => onDeleteTask(columnId, task.id)}
-                                          >
+                                          <IconButton color="error" onClick={() => onDeleteTask(columnId, task.id)}>
                                             <DeleteIcon />
                                           </IconButton>
                                         </CardContent>
@@ -360,9 +353,7 @@ function Dashboard() {
             </Grid>
           </Grid>
         </MDBox>
-
-        {/* Liste des clients */}
-        <MDBox mt={4.5}>
+    <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Card>
@@ -404,5 +395,4 @@ function Dashboard() {
     </DashboardLayout>
   );
 }
-
 export default Dashboard;

@@ -62,12 +62,16 @@ const questionnaireProjetRoutes = require('./routes/get_questionnare_by_projet')
 const questionnaire = require("./routes/questionnaires");
 const countRoutes = require("./routes/count");
 const validationClientRoutes = require("./routes/validationclient");
+const validationUserRoutes = require("./routes/validationuser");
 const questionnaire1 = require("./routes/questionnaires");
 const archiverClientRoutes = require('./routes/archiverclient');
 const questionnaireSiteRoutes = require('./routes/getquestionnaires_sites');
 const userRoutes = require("./routes/userlist");
 const ajoutUserRoute = require("./routes/ajoutuser");
 const userEditRoute = require("./routes/useredit");
+const countclientRoutes = require("./routes/countclient");
+app.use("/api/countclient", countclientRoutes);
+app.use("/api/validationuser", validationUserRoutes);
 app.use("/api", userEditRoute);
 app.use("/api/users", userRoutes);
 app.use('/api/clients', archiverClientRoutes);

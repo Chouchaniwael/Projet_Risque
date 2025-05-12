@@ -24,6 +24,10 @@ router.post("/login", async (req, res) => {
       console.log("Mot de passe incorrect");
       return res.status(401).json({ success: false, message: "Mot de passe incorrect" });
     }
+    if (user.statut === false) {
+      console.log("Utilisateur en cours de validation");
+      return res.status(401).json({ success: false, message: "Utilisateur en cours de validation" });
+    }
 
     // 3. Création du token JWT
     const token = jwt.sign(

@@ -100,12 +100,25 @@ function Dashboard() {
       })
       .catch((err) => console.error("Erreur:", err));
 
-    fetch("http://localhost:5000/api/questionnaire_projet/countRisks?projet=exampleProjet")
-      .then((res) => res.json())
-      .then((data) => {
-        setRiskCounts(data);
-      })
-      .catch((err) => console.error("Erreur lors de la récupération des risques:", err));
+    fetch("http://localhost:5000/api/stats/risques")
+  .then((res) => res.json())
+  .then((data) => {
+    const risks = data.details || {};
+    console.log("Risques reçus depuis l'API :", risks); // debug ici
+
+    const normalised = {
+      extreme: risks["Extrême"] || 0,
+      fort: risks["Fort"] || 0,
+      moyen: risks["Moyen"] || 0,
+      faible: risks["Faible"] || 0,
+      accepte: risks["Accepté"] || 0,
+    };
+
+    setRiskCounts(normalised);
+  })
+  .catch((err) => console.error("Erreur lors de la récupération des risques:", err));
+
+
   }, [statut]);
 
   const pieData = {

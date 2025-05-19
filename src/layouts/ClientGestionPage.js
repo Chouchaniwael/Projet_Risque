@@ -27,6 +27,8 @@ import Alert from '@mui/material/Alert';
 
 function ClientGestionPage() {
   const [client, setClient] = useState(null);
+  const [sites, setSites] = useState([]);
+
   const [formData, setFormData] = useState({
     nom: "",
     adresse: "",
@@ -48,41 +50,47 @@ function ClientGestionPage() {
     setSubmitStatus(null);
   };
 
-  useEffect(() => {
-    const fetchClient = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/clients?name=${id}`);
-        const data = Array.isArray(response.data) ? response.data[0] : response.data;
+ useEffect(() => {
+  const fetchClientAndSites = async () => {
+    try {
+      const clientRes = await axios.get(`http://localhost:5000/api/clients?name=${id}`);
+      const data = Array.isArray(clientRes.data) ? clientRes.data[0] : clientRes.data;
 
-        const clientData = {
-          nom: data.Nom || "Nom inconnu",
-          logo: data.Logo ? `http://localhost:5000/images/${data.Logo}` : "",
-          contact: data.Contact || "Non renseigné",
-          secteur: data.Secteur || "",
-          adresse: data.Adresse || "Non renseignée",
-          statut: data.Statut !== undefined ? data.Statut : true,
-          etat: data.etat || 0,
-          description: data.Description || "Pas de description disponible.",
-          mail: data.Mail || "Non renseigné",
-          linkedin: data.linkedin || "#",
-        };
+      const clientData = {
+        nom: data.Nom || "Nom inconnu",
+        logo: data.Logo ? `http://localhost:5000/images/${data.Logo}` : "",
+        contact: data.Contact || "Non renseigné",
+        secteur: data.Secteur || "",
+        adresse: data.Adresse || "Non renseignée",
+        statut: data.Statut !== undefined ? data.Statut : true,
+        etat: data.etat || 0,
+        description: data.Description || "Pas de description disponible.",
+        mail: data.Mail || "Non renseigné",
+        linkedin: data.linkedin || "#",
+      };
 
-        setClient(clientData);
-        setFormData({
-          nom: clientData.nom,
-          adresse: clientData.adresse,
-          mail: clientData.mail,
-          numero: clientData.contact,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Erreur lors du chargement du client :", error);
-        setLoading(false);
-      }
-    };
+      setClient(clientData);
+      setFormData({
+        nom: clientData.nom,
+        adresse: clientData.adresse,
+        mail: clientData.mail,
+        numero: clientData.contact,
+      });
 
-    fetchClient();
-  }, [id]);
+      // 🔽 Fetch des sites liés au client
+      const siteRes = await axios.get(`http://localhost:5000/api/sites/${data.Nom}`);
+      setSites(siteRes.data);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Erreur lors du chargement des données client ou sites :", error);
+      setLoading(false);
+    }
+  };
+
+  fetchClientAndSites();
+}, [id]);
+
 
   const validateForm = () => {
     const errors = {};
@@ -205,23 +213,29 @@ function ClientGestionPage() {
           </Grid>
 
           <Grid item xs={12} xl={4}>
-            <ProfilesList
-              title={<span style={{ 
-                color: theme.palette.primary.main,
-                fontWeight: theme.typography.fontWeightBold 
-              }}>
-                Liste des sites
-              </span>}
-              profiles={SiteListData}
-              shadow={true}
-              sx={{
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: theme.shadows[8],
-                },
-              }}
-            />
+           <ProfilesList
+  title={
+    <span style={{ 
+      color: theme.palette.primary.main,
+      fontWeight: theme.typography.fontWeightBold 
+    }}>
+      Liste des sites
+    </span>
+  }
+  profiles={sites.map(site => ({
+    image: "", // Ajoutez une image si disponible
+    name: site.Nom || "Nom du site",
+    description: site.adresse || "Adresse non renseignée",
+    action: {
+      type: "internal",
+      route: "#", // ou `/sites/${site._id}` si vous avez une page de détail
+      color: "info",
+      label: site.etat ? "Actif" : "Inactif",
+    },
+  }))}
+  shadow={true}
+/>
+
           </Grid>
         </Grid>
       </MDBox>

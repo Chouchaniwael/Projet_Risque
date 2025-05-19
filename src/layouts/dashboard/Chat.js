@@ -1,58 +1,365 @@
-import React, { useState, useEffect } from "react";
-import { io } from "socket.io-client";
-import { Box, TextField, Button, Typography, List, ListItem, ListItemText } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  IconButton,
+  Card,
+  CardContent,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Bar, Pie } from "react-chartjs-2";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
+import AddIcon from "@mui/icons-material/Add";
+import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
+import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
-const socket = io("http://localhost:5000"); // Connect to the WebSocket server
+ChartJS.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement);
 
-function Chat() {
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+function Dashboard() {
+  const [clientCount, setClientCount] = useState(0);
+  const [clients, setClients] = useState([]);
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const statut = true;
+  const [barChartData, setBarChartData] = useState({ labels: [], datasets: [] });
+
+  const [pieBySectorData, setPieBySectorData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  const [kanbanTasks, setKanbanTasks] = useState({
+    idea: [{ id: "1", content: "Task 1" }, { id: "2", content: "Task 2" }],
+    started: [{ id: "3", content: "Task 3" }],
+    finished: [{ id: "4", content: "Task 4" }],
+  });
+
+  const [newTask, setNewTask] = useState("");
+
+  const [riskCounts, setRiskCounts] = useState({
+    extreme: 0,
+    fort: 0,
+    moyen: 0,
+    faible: 0,
+    accepte: 0,
+  });
 
   useEffect(() => {
-    // Listen for incoming messages
-    socket.on("receiveMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
+    fetch("http://localhost:5000/api/countclient")
+      .then((res) => res.json())
+      .then((data) => {
+        setClientCount(data.clientCount);
+      })
+      .catch((err) => console.error("Erreur:", err));
 
-    return () => {
-      socket.off("receiveMessage"); // Clean up the listener
-    };
-  }, []);
+    fetch(`http://localhost:5000/api/clients?statut=${statut}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setClients(data);
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      socket.emit("sendMessage", message); // Send the message to the server
-      setMessage("");
+        const sectorCount = {};
+        data.forEach((client) => {
+          const secteur = client.Secteur || "Inconnu";
+          sectorCount[secteur] = (sectorCount[secteur] || 0) + 1;
+        });
+
+        const labels = Object.keys(sectorCount);
+        const values = Object.values(sectorCount);
+
+        setBarChartData({
+          labels,
+          datasets: [
+            {
+              label: "Nombre de clients",
+              data: values,
+              backgroundColor: "#42a5f5",
+            },
+          ],
+        });
+
+        setPieBySectorData({
+          labels,
+          datasets: [
+            {
+              label: "Répartition par secteur",
+              data: values,
+              backgroundColor: [
+                "#0088FE",
+                "#00C49F",
+                "#FFBB28",
+                "#FF8042",
+                "#AF19FF",
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+              ],
+              hoverOffset: 4,
+            },
+          ],
+        });
+      })
+      .catch((err) => console.error("Erreur:", err));
+
+    fetch("http://localhost:5000/api/stats/risques")
+      .then((res) => res.json())
+      .then((data) => {
+        const risks = data.details || {};
+        const normalised = {
+          extreme: risks["Extrême"] || 0,
+          fort: risks["Fort"] || 0,
+          moyen: risks["Moyen"] || 0,
+          faible: risks["Faible"] || 0,
+          accepte: risks["Accepté"] || 0,
+        };
+        setRiskCounts(normalised);
+      })
+      .catch((err) => console.error("Erreur lors de la récupération des risques:", err));
+  }, [statut]);
+
+  const pieBySectorOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const data = tooltipItem.dataset.data;
+            const total = data.reduce((sum, val) => sum + val, 0);
+            const value = data[tooltipItem.dataIndex];
+            const percentage = ((value / total) * 100).toFixed(1);
+            return `${tooltipItem.label}: ${value} (${percentage}%)`;
+          },
+        },
+      },
+    },
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Répartition des clients par secteur",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  const handleAddKanbanTask = () => {
+    if (newTask.trim()) {
+      setKanbanTasks((prev) => ({
+        ...prev,
+        idea: [...prev.idea, { id: Date.now().toString(), content: newTask }],
+      }));
+      setNewTask("");
     }
   };
 
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+
+    const sourceColumn = [...kanbanTasks[source.droppableId]];
+    const destColumn = [...kanbanTasks[destination.droppableId]];
+    const [moved] = sourceColumn.splice(source.index, 1);
+    destColumn.splice(destination.index, 0, moved);
+
+    setKanbanTasks((prev) => ({
+      ...prev,
+      [source.droppableId]: sourceColumn,
+      [destination.droppableId]: destColumn,
+    }));
+  };
+
+  const onDeleteTask = (columnId, taskId) => {
+    setKanbanTasks((prev) => ({
+      ...prev,
+      [columnId]: prev[columnId].filter((task) => task.id !== taskId),
+    }));
+  };
+
   return (
-    <Box sx={{ p: 2, border: "1px solid #ccc", borderRadius: "8px", maxWidth: "400px", margin: "auto" }}>
-      <Typography variant="h6" gutterBottom>
-        Chat Instantané
-      </Typography>
-      <List sx={{ maxHeight: "200px", overflowY: "auto", mb: 2 }}>
-        {messages.map((msg, index) => (
-          <ListItem key={index}>
-            <ListItemText primary={msg} />
-          </ListItem>
-        ))}
-      </List>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          size="small"
-          placeholder="Écrivez un message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <Button variant="contained" color="primary" onClick={handleSendMessage}>
-          Envoyer
-        </Button>
-      </Box>
-    </Box>
+    <DashboardLayout>
+      <DashboardNavbar />
+      <MDBox py={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="error" icon="people" title="Nombre de clients gérés" count={clientCount} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="warning" icon="priority_high" title="Risques extrêmes" count={riskCounts.extreme} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="info" icon="signal_cellular_4_bar" title="Risques forts" count={riskCounts.fort} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="success" icon="check_circle" title="Risques moyens" count={riskCounts.moyen} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="secondary" icon="check_circle_outline" title="Risques faibles" count={riskCounts.faible} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ComplexStatisticsCard color="secondary" icon="check_circle_outline" title="Risques acceptés" count={riskCounts.accepte} />
+          </Grid>
+        </Grid>
+
+        <MDBox mt={4.5}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={4}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" mb={2}>Répartition clients par secteur (pourcentage)</Typography>
+                  <Pie data={pieBySectorData} options={pieBySectorOptions} />
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" mb={2}>Répartition des clients par secteur (barres)</Typography>
+                  <Bar data={barChartData} options={barOptions} />
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <Calendar onChange={setCalendarDate} value={calendarDate} />
+            </Grid>
+          </Grid>
+        </MDBox>
+
+        <Grid item xs={12} md={6} lg={4} sx={{ mt: 3 }}>
+          <MDButton variant="contained" color="primary" fullWidth onClick={() => window.open("https://chat.google.com", "_blank")}>
+            Accéder à Google Chat
+          </MDButton>
+        </Grid>
+
+        <MDBox mt={4.5}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Grid container spacing={2}>
+                  {Object.entries(kanbanTasks).map(([columnId, columnTasks]) => {
+                    const columnTitles = {
+                      idea: { title: "Idées", color: "#1976d2" },
+                      started: { title: "En cours", color: "#f9a825" },
+                      finished: { title: "Terminées", color: "#2e7d32" },
+                    };
+                    const { title, color } = columnTitles[columnId] || { title: columnId, color: "#ccc" };
+
+                    return (
+                      <Grid item xs={12} md={4} key={columnId}>
+                        <Paper
+                          elevation={4}
+                          sx={{
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
+                            p: 2,
+                            minHeight: 400,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            align="center"
+                            gutterBottom
+                            sx={{
+                              backgroundColor: color,
+                              color: "#fff",
+                              borderRadius: 1,
+                              py: 1,
+                              mb: 2,
+                            }}
+                          >
+                            {title} ({columnTasks.length})
+                          </Typography>
+
+                          {columnId === "idea" && (
+                            <MDBox mb={2}>
+                              <TextField
+                                label="Nouvelle tâche"
+                                value={newTask}
+                                onChange={(e) => setNewTask(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                sx={{ mb: 1 }}
+                              />
+                              <Button
+                                variant="contained"
+                                color="white"
+                                onClick={handleAddKanbanTask}
+                                startIcon={<AddIcon />}
+                                fullWidth
+                              >
+                                Ajouter Tâche
+                              </Button>
+                            </MDBox>
+                          )}
+
+                          <Droppable droppableId={columnId}>
+                            {(provided) => (
+                              <div {...provided.droppableProps} ref={provided.innerRef} style={{ flexGrow: 1 }}>
+                                {columnTasks.map((task, index) => (
+                                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                                    {(provided) => (
+                                      <Card
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        sx={{ mb: 2, boxShadow: 3, borderRadius: 2, backgroundColor: "#fff" }}
+                                      >
+                                        <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2 }}>
+                                          <Typography sx={{ wordBreak: "break-word", flexGrow: 1 }}>{task.content}</Typography>
+                                          <IconButton color="error" onClick={() => onDeleteTask(columnId, task.id)}>
+                                            <DeleteIcon />
+                                          </IconButton>
+                                        </CardContent>
+                                      </Card>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </Paper>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </DragDropContext>
+            </Grid>
+          </Grid>
+        </MDBox>
+      </MDBox>
+      <Footer />
+    </DashboardLayout>
   );
 }
 
-export default Chat;
+export default Dashboard;

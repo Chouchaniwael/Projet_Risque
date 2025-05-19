@@ -48,7 +48,9 @@ import ValidationProject from "layouts/validationProject";
 import RiskMatrixTable from "layouts/RiskMatrixTable";
 import { useParams } from "react-router-dom";
 import Users from "layouts/Users";
-
+import ClientSitesPage from "layouts/ClientSitesPage";
+import GestionRisqueSite from "layouts/GestionRisqueSite";
+import ValidationProjetSite from "layouts/validationProjetSite";
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -196,7 +198,11 @@ export default function App() {
         <Route path="/DetailQuestionnaire/:titre" element={<DetailQuestionnaire />} />
         <Route path="/GestionRisque/:id/ValidationProject" element={<ValidationProject />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/ClientSites/:id" element={<ClientSitesPage />} />
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+        <Route path="/GestionRisqueSite/:id" element={<GestionRisqueSite />} />
+        <Route path="/GestionRisqueSite/:id/Validation" element={<ValidationProjetSite />} />
+
       </Routes>
     </ThemeProvider>
   );

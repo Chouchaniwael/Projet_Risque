@@ -65,7 +65,7 @@ export default function useClientData() {
         }
       }
 
-      const response = await fetch(`http://localhost:5000/api/clients?statut=true`);
+      const response = await fetch(`http://localhost:5000/api/clients`);
       const json = await response.json();
 
       console.log("Réponse brute API :", json);
@@ -74,7 +74,7 @@ export default function useClientData() {
       console.log("Clients récupérés :", clients);
 
       // Filtrer les clients en fonction du rôle de l'utilisateur
-      const filteredClients = userRole === "consultant"
+      const filteredClients = userRole === "Consultant"
         ? clients.filter((client) => Number(client.etatarchivage) === 0)
         : clients;
 
@@ -112,14 +112,15 @@ export default function useClientData() {
               />
             ),
             function: <Job title={client.Secteur} description={client.Adresse} />,
-            status: (
-              <MDBadge
-                badgeContent={client.Statut ? "Actif" : "Inactif"}
-                color={client.Statut ? "success" : "dark"}
-                variant="gradient"
-                size="sm"
-              />
-            ),
+          status: (
+  <MDBadge
+    badgeContent={client.Statut ? "Actif" : "Archivé"}
+    color={client.Statut ? "success" : "dark"}
+    variant="gradient"
+    size="sm"
+  />
+),
+
             analyseStatus: (
               <MDBox display="flex" alignItems="center">
                 {statutAnalyse === "Nouveau" && (
@@ -153,16 +154,20 @@ export default function useClientData() {
                 >
                   Consulter
                 </MDTypography>
-                <Tooltip title="Archiver le client" arrow>
-  <IconButton
-    size="small"
-    color="gray"
-    onClick={() => handleDeleteClient(client._id)}
-    sx={{ ml: 3 }}
-  >
-    <ArchiveIcon fontSize="small" />
-  </IconButton>
+              <Tooltip title={client.etatarchivage === 2 ? "Déjà archivé" : "Archiver le client"} arrow>
+  <span>
+    <IconButton
+      size="small"
+      color="gray"
+      onClick={() => handleDeleteClient(client._id)}
+      sx={{ ml: 3 }}
+      disabled={client.etatarchivage === 2}
+    >
+      <ArchiveIcon fontSize="small" />
+    </IconButton>
+  </span>
 </Tooltip>
+
               </MDBox>
             ),
           };
@@ -199,7 +204,7 @@ export default function useClientData() {
   
     try {
       const response = await fetch(
-        `http://localhost:5000/api/clients/archiver/${clientId}`,
+        `http://localhost:5000/api/clients/archiver1/${clientId}`,
         {
           method: "PUT",
           headers: {

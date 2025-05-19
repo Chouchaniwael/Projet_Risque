@@ -9,6 +9,7 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Icon from "@mui/material/Icon";
+import PeopleIcon from "@mui/icons-material/People";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -104,12 +105,19 @@ function Header({ children }) {
       >
         <Grid container spacing={3} alignItems="center">
           <Grid item>
-            <MDAvatar src={burceMars} alt="profile-image" size="xl" shadow="sm" />
+            <MDAvatar
+  size="xl"
+  shadow="sm"
+  sx={{ bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}
+>
+  <PeopleIcon sx={{ fontSize: 40, color: "grey.700" }} />
+</MDAvatar>
+
           </Grid>
           <Grid item>
             <MDBox height="100%" mt={0.5} lineHeight={1}>
               <MDTypography variant="h5" fontWeight="medium">
-                {userData.name} {userData.prenom}  {/* Affichage du nom dynamique */}
+             Informations utilisateur
               </MDTypography>
               <MDTypography variant="button" color="text" fontWeight="regular">
                 {userData.role || "Position non définie"} {/* Affichage de la position de l'utilisateur */}

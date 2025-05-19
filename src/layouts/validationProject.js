@@ -285,21 +285,43 @@ const ValidationProject = () => {
       });
     });
 
-    worksheet.eachRow((row, rowNumber) => {
-      row.eachCell((cell) => {
-        cell.border = {
-          top: { style: "thin" },
-          left: { style: "thin" },
-          bottom: { style: "thin" },
-          right: { style: "thin" },
+ worksheet.eachRow((row, rowNumber) => {
+  row.eachCell((cell, colNumber) => {
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+
+    if (rowNumber === 1) {
+      cell.font = { bold: true, size: 12 };
+    } else {
+      cell.font = { size: 11 };
+
+      // Appliquer la couleur en fonction de "Risque Net"
+      const risqueNetCol = headers.indexOf("Risque Net") + 1; // index + 1 car ExcelJS commence à 1
+      if (colNumber === risqueNetCol) {
+        const value = cell.value?.toString().toLowerCase();
+
+        let color = "FFFFFFFF"; // blanc par défaut
+
+        if (value.includes("extrême")) color = "FFFF0000"; // rouge
+        else if (value.includes("fort")) color = "FFFFA500"; // orange
+        else if (value.includes("moyen")) color = "FFFFFF00"; // jaune
+        else if (value.includes("faible")) color = "FF92D050"; // vert clair
+        else if (value.includes("accepté")) color = "FF00B0F0"; // bleu
+
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: color },
         };
-        if (rowNumber === 1) {
-          cell.font = { bold: true, size: 12 };
-        } else {
-          cell.font = { size: 11 };
-        }
-      });
-    });
+      }
+    }
+  });
+});
+
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });

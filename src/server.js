@@ -71,8 +71,12 @@ const ajoutUserRoute = require("./routes/ajoutuser");
 const userEditRoute = require("./routes/useredit");
 const countclientRoutes = require("./routes/countclient");
 const risquesRoute = require('./routes/risques');
-app.use('/api', risquesRoute);
+const risqueparsecteurRoute = require('./routes/risqueparsecteur');
+app.use('/api/risqueparsecteur', risqueparsecteurRoute);
 
+
+
+app.use('/api', risquesRoute);
 app.use("/api/countclient", countclientRoutes);
 app.use("/api/validationuser", validationUserRoutes);
 app.use("/api", userEditRoute);

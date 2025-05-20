@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Questionnaire_site = require('../models/questionnaire_site');
 
-// GET all questionnaires or filter by titre
 router.get('/', async (req, res) => {
   try {
     const filter = {}; // Declare filter before using it
@@ -21,3 +20,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+

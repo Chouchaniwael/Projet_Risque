@@ -72,10 +72,11 @@ const userEditRoute = require("./routes/useredit");
 const countclientRoutes = require("./routes/countclient");
 const risquesRoute = require('./routes/risques');
 const risqueparsecteurRoute = require('./routes/risqueparsecteur');
+const questionnaireProjetSiteRoutes = require('./routes/ajouter_questionnaire_projet_site');
+const getQuestionnaireBySite = require('./routes/get_questionnare_by_projet_site');
+app.use('/api/questionnaire_site_statut', getQuestionnaireBySite);
+app.use('/api/questionnaire_projet_site', questionnaireProjetSiteRoutes);
 app.use('/api/risqueparsecteur', risqueparsecteurRoute);
-
-
-
 app.use('/api', risquesRoute);
 app.use("/api/countclient", countclientRoutes);
 app.use("/api/validationuser", validationUserRoutes);

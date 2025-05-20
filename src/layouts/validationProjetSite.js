@@ -36,11 +36,13 @@ const ValidationProjetSite = () => {
         const [standards, siteRes] = await Promise.all([
           Promise.all(
             selectedQuestionnaires.map((titre) =>
-              fetch(`http://localhost:5000/api/questionnaireRoutes?titre=${titre}`).then((res) => res.json())
+              fetch(`http://localhost:5000/api/questionnaire_site?titre=${titre}`).then((res) => res.json())
             )
           ),
-          fetch(`http://localhost:5000/api/questionnaire_projet_site?siteId=${id}`).then((res) => res.json()),
+          fetch(`http://localhost:5000/api/questionnaire_projet_site?projet=${id}`).then((res) => res.json()),
         ]);
+        
+console.log("selectedQuestionnaires", selectedQuestionnaires);
 
         const flatData = standards.map((r) => r[0]);
         const project = siteRes;
@@ -89,8 +91,10 @@ const ValidationProjetSite = () => {
         setLoading(false);
       }
     };
-
+console.log("location.state", location.state);
     if (selectedQuestionnaires?.length > 0) {
+      
+
       fetchAllData();
     }
   }, [id]);

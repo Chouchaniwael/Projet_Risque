@@ -51,7 +51,7 @@ const GestionRisqueSite = () => {
 
     const fetchQuestionnaires = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/questionnaireRoutes");
+        const response = await fetch("http://localhost:5000/api/questionnaire_site");
         const data = await response.json();
         setQuestionnaires(data);
       } catch (error) {

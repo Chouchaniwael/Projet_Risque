@@ -83,9 +83,3 @@ export default function RiskMatrixTable() {
   );
 }
 
-import PropTypes from "prop-types"; // Importation de PropTypes pour la validation des props
-
-// Validation des props
-RiskMatrixTable.propTypes = {
-  projetId: PropTypes.string.isRequired, // Assure que projetId est une chaîne et est requis
-};

@@ -6,6 +6,7 @@ import defaultImage from "assets/images/team-3.jpg";
 import MDBox from "components/MDBox";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 import MDButton from 'components/MDButton';
+import BusinessIcon from '@mui/icons-material/Business';
 import {
   FaFireExtinguisher,
   FaShieldAlt,
@@ -102,26 +103,26 @@ const GestionRisqueSite = () => {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox px={3} py={2}>
-        <Card sx={{ mb: 4, width: "100%" }}>
-          <CardContent>
-            <MDBox display="flex" alignItems="center" justifyContent="flex-start" px={5}>
-              <MDAvatar
-                src={defaultImage}
-                name={site.Nom}
-                size="lg"
-                sx={{ marginRight: 3 }}
-              />
-              <MDBox>
-                <Typography variant="h5" align="left">
-                  {site.Nom}
-                </Typography>
-                <Typography variant="body1" align="left" sx={{ mt: 1 }}>
-                  Sélectionnez les questionnaires à appliquer au site.
-                </Typography>
-              </MDBox>
-            </MDBox>
-          </CardContent>
-        </Card>
+  <Card sx={{ mb: 4, width: "100%" }}>
+  <CardContent>
+    <MDBox display="flex" alignItems="center" justifyContent="flex-start" px={5}>
+      <MDAvatar
+        size="lg"
+        sx={{ marginRight: 3, bgcolor: "#e3f2fd" }}
+      >
+        <BusinessIcon sx={{ fontSize: 32, color: "#1976d2" }} />
+      </MDAvatar>
+      <MDBox>
+        <Typography variant="h5" align="left">
+          {site.Nom}
+        </Typography>
+        <Typography variant="body1" align="left" sx={{ mt: 1 }}>
+          Sélectionnez les questionnaires
+        </Typography>
+      </MDBox>
+    </MDBox>
+  </CardContent>
+</Card>
 
         <Grid container spacing={3}>
           {questionnaires.map((q) => {

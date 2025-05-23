@@ -37,12 +37,12 @@ function slugify(str) {
 
 const iconMap = {
   "Incendie": <FaFireExtinguisher size={20} />,
-  "Sécurité physique": <FaShieldAlt size={20} />,
-  "Contrôle d’accès": <FaLock size={20} />,
+  "Sécurité physique et environnementale": <FaShieldAlt size={20} />,
+  "Contrôle d'accès": <FaLock size={20} />,
   "Connectivité réseau": <FaNetworkWired size={20} />,
   "Inondation": <FaWater size={20} />,
   "Documents et équipements de sécurité": <FaFileAlt size={20} />,
-  "Electricité et climatisation": <FaBolt size={20} />,
+  "Électricité et climatisation": <FaBolt size={20} />,
   "Monitoring du site": <FaVideo size={20} />,
 };
 

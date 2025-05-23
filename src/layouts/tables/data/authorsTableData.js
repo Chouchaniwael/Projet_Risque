@@ -13,21 +13,30 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from 'sweetalert2';
+import BusinessIcon from "@mui/icons-material/Business";
+
 import ArchiveIcon from '@mui/icons-material/Archive';
 export default function useClientData() {
   const navigate = useNavigate();
 
   const Author = ({ image, name, email }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image || defaultImage} name={name} size="sm" />
-      <MDBox ml={2} lineHeight={1}>
-        <MDTypography display="block" variant="button" fontWeight="medium">
-          {name}
-        </MDTypography>
-        <MDTypography variant="caption">{email}</MDTypography>
-      </MDBox>
+  <MDBox display="flex" alignItems="center" lineHeight={1}>
+    {image && image.trim() !== "" ? (
+      <MDAvatar src={image} name={name} size="sm" />
+    ) : (
+      <MDAvatar size="sm" sx={{ bgcolor: "#e0e0e0" }}>
+        <BusinessIcon sx={{ color: "#3c3c3c" }} />
+      </MDAvatar>
+    )}
+    <MDBox ml={2} lineHeight={1}>
+      <MDTypography display="block" variant="button" fontWeight="medium">
+        {name}
+      </MDTypography>
+      <MDTypography variant="caption">{email}</MDTypography>
     </MDBox>
-  );
+  </MDBox>
+);
+
 
   const Job = ({ title, description }) => (
     <MDBox lineHeight={1} textAlign="left">
@@ -105,7 +114,7 @@ export default function useClientData() {
                 image={
                   client.Logo && client.Logo.trim() !== ""
                     ? `http://localhost:5000/images/${client.Logo}`
-                    : defaultImage
+                    : ""
                 }
                 name={client.Nom}
                 email={client.Contact || "email@indisponible.com"}

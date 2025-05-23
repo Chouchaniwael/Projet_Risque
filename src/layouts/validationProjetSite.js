@@ -39,7 +39,7 @@ const ValidationProjetSite = () => {
               fetch(`http://localhost:5000/api/questionnaire_site?titre=${titre}`).then((res) => res.json())
             )
           ),
-          fetch(`http://localhost:5000/api/questionnaire_projet_site?projet=${id}`).then((res) => res.json()),
+          fetch(`http://localhost:5000/api/questionnaire_site_statut?siteId=${id}`).then((res) => res.json()),
         ]);
         
 console.log("selectedQuestionnaires", selectedQuestionnaires);
@@ -187,7 +187,7 @@ console.log("location.state", location.state);
     });
 
     try {
-      await fetch("http://localhost:5000/api/ajouter_questionnaire_projet_site", {
+      await fetch("http://localhost:5000/api/questionnaire_projet_site", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ siteId: id, questionnaires: fullData }),

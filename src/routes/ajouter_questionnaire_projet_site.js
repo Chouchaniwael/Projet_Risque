@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const QuestionnaireProjetSite = require('../models/questionnaire_projet_site');
+const QuestionnaireProjetSite = require('../models/questionnaire_projet_site.js');
 
 // 🔁 POST /api/questionnaire_projet_site
 router.post('/', async (req, res) => {

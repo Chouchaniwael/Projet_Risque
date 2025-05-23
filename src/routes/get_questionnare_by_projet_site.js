@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const QuestionnaireProjetSite = require('../models/questionnaire_projet_site');
+const QuestionnaireProjetSite = require('../models/questionnaire_projet_site.js');
 
 // 🔍 Fonction utilitaire pour évaluer le statut d'analyse
 function getAnalyseStatus(analyse) {

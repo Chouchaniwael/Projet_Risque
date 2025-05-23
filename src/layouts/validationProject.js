@@ -204,16 +204,21 @@ const ValidationProject = () => {
             priorite: risk.priorite || "",
           },
         },
-        sections: q.sections.map((section, sIdx) => ({
-          titre: section.titre,
-          questions: section.questions.map((question, queIdx) => {
-            const questionId = `${qIdx}-${sIdx}-${queIdx}`;
-            return {
-              ...question,
-              reponse: answers[questionId] || "N/A",
-            };
-          }),
-        })),
+       sections: q.sections.map((section, sIdx) => ({
+  titre: section.titre,
+  questions: section.questions.map((question, queIdx) => {
+    const questionId = `${qIdx}-${sIdx}-${queIdx}`;
+    return {
+      ...question,
+      reponse: answers[questionId] || "N/A",
+      commentaire:
+        answers[`${questionId}-comment`] !== undefined
+          ? answers[`${questionId}-comment`]
+          : "",
+    };
+  }),
+})),
+
       };
     });
 
@@ -478,7 +483,7 @@ const ValidationProject = () => {
                                     </MenuItem>
                                   </Select>
                                 </FormControl>
-                                {answers[questionId] === "Commentaires" && (
+                                {(answers[questionId] === "Commentaires" || answers[questionId] === "Oui"  || answers[questionId] === "Non" || answers[questionId] === "N/A") && (
                                   <TextField
                                     fullWidth
                                     label="Commentaires"
